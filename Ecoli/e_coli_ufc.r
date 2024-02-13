@@ -20,9 +20,17 @@ install.packages('MASS')
 library(MASS)
 install.packages('scales')
 library(scales)
-install.packages('growthrates')
-library(growthrates)
+#install.packages('growthrates')
+#library(growthrates)
 
+# ********** FUNÇÕES **********
+baranyi <- function(params, x) {
+  params[1] + params[2] * (x + (1/params[2]) * log(exp(-params[2]*x) +
+  exp(-params[2] * params[3]) - exp(-params[2] * (x + params[3])))) -
+  log(1 + ((exp(params[2] * (x + (1/params[2]) * log(exp(-params[2]*x) +
+  exp(-params[2] * params[3]) - exp(-params[2] * (x + params[3])))))-1)/
+    (exp(params[4]-params[1]))))
+}
 
 # ********** LEITURA E PRÉ-PROCESSAMENTO **********
 
@@ -116,162 +124,191 @@ ggsave('mg1655_continuo.png')
 # Criando tabelas para modelagem usando pacote growthrates
 colnames(ms1655_graf) <- c('tempo', 'conc', 'media', 'erro')    # Renomeia as colunas para ficar mais fácil a manipulação
 
-# 0M fitado com Gompertz de 3 parâmetros (com lag)
+# 0M fitado manualmente (Baranyi)
 tab_0 <- filter(ms1655_graf, conc=='0 mol/L')   # Pega informações apenas da concentração desejada
-tab0 <- tab_0[,-2]   # Retira coluna de concentração e erro
-tab0$erro <- (tab0$erro)/(tab0$media*log(10))   # Faz propagação de erro associado ao log10(media)
-tab0$media <- log10(tab0$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
-
-
-p0 <- c(y0=tab0[1,2], mumax=0.2, K=max(tab0$media), lambda=0)   # Chutes iniciais dos parâmetros do modelo de Gompertz (y0=valor de log10(UFC) do tempo 0, mumax=velocidade máxima de crescimento, K=carrying capacity, lambda=tempo de lag)
-fit0 <- fit_growthmodel(FUN=grow_gompertz3, p=p0, tab0$tempo, tab0$media, transform="log", which=c('y0','mumax', 'K'))    # Faz o fit do modelo usando os dados experimentais e chutes iniciais de parâmetros. Nesse caso fixa lag=0
-param_0 <- coef(fit0)   # Cria vetor com parâmetros fitados
-summary(fit0)   # Mostra todos os valores de parâmetros, erro padrão associado, t value, significância, graus de liberdade e correlação entre os parâmetros
-
-tab0_graf <- grow_gompertz3(tab0$tempo, param_0)    # Cria curva contínua do Gompertz de 3 parâmetros com os parâmetros fitados
-tab0_graf <- cbind.data.frame(tab0_graf, tab0$media, tab0$erro)    # Cria tabela com valores fitados e dados experimentais
-graf_0 <- ggplot(tab0_graf, aes(x=time))+   # Faz gráfico de linha (fit) e pontos (dados experimentais) sobrepostos
-    geom_point(aes(y=tab0$media))+
-    geom_line(aes(y=y))+
-    geom_errorbar(aes(ymin=tab0$media-tab0$erro, ymax=tab0$media+tab0$erro), width=.3)+
-    theme_bw()+
-    ggtitle('0M - Gompertz3 (lag fixada)')+
-    labs(
-      x='Time (hours)',
-      y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+d <- tab_0$tempo
+erro_0 <- (tab_0$erro)/(tab_0$media*log(10))
+y <- log10(tab_0$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+lambda <- 3
+y0 <- min(y)
+fit_0M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
+                log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax *
+                (d + lambda)))))-1)/(exp(ymax-y0)))),
+                start=list(mmax=0.1, ymax=max(y)))
+baranyi_param_0M <- coef(fit_0M)
+print(baranyi_param_0M)
+coef_0 <- c(min(y), baranyi_param_0M[1], 3, baranyi_param_0M[2])
+y_0M <- baranyi(coef_0, d)
+tab0_graf <- cbind.data.frame(d, y, y_0M, erro_0)
+graf_0 <- ggplot(tab0_graf, aes(x=d))+
+  geom_point(aes(y=y))+
+  geom_line(aes(y=y_0M))+
+  geom_errorbar(aes(ymin=y-erro_0, ymax=y+erro_0), width=.3)+
+  theme_bw()+
+  ggtitle('Baranyi - 0M (lag fixada 2)')+
+  labs(
+    x='Time (hours)',
+    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
 graf_0
-ggsave('0M-Gompertz3.png')    # Salva gráfico do fit e dados originais
+summary(fit_0M)
+ggsave('graf_0.png', graf_0)
 
-
-# 0,25M fitado com Gompertz de 3 parâmetros (fixando lag=0)
-tab_025 <- filter(ms1655_graf, conc=='0.25 mol/L')
-tab025 <- tab_025[,-2]
-tab025$erro <- (tab025$erro)/(tab025$media*log(10))
-tab025$media <- log10(tab025$media)
-
-p025 <- c(y0=tab025[1,2], mumax=0.2, K=max(tab025$media) , lambda=0)
-fit025 <- fit_growthmodel(FUN=grow_gompertz3, p=p025, tab025$tempo, tab025$media, transform="log", which=c('y0', 'mumax', 'K'))
-param_025 <- coef(fit025)
-summary(fit025)
-
-tab025_graf <- grow_gompertz3(tab025$tempo, param_025)
-tab025_graf <- cbind.data.frame(tab025_graf, tab025$media, tab025$erro)
-graf_025 <- ggplot(tab025_graf, aes(x=time))+   # Faz gráfico de linha (fit) e pontos (dados experimentais) sobrepostos
-    geom_point(aes(y=tab025$media))+
-    geom_line(aes(y=y))+
-    geom_errorbar(aes(ymin=tab025$media-tab025$erro, ymax=tab025$media+tab025$erro), width=.3)+
-    theme_bw()+
-    ggtitle('0,25M - Gompertz3 (lag fixada)')+
-    labs(
-      x='Time (hours)',
-      y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+# 0,25M fitado manualmente (Baranyi)
+tab_025 <- filter(ms1655_graf, conc=='0.25 mol/L')   # Pega informações apenas da concentração desejada
+d <- tab_025$tempo
+erro_025 <- (tab_025$erro)/(tab_025$media*log(10))
+y <- log10(tab_025$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+lambda <- 3
+y0 <- min(y)
+fit_025M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
+                log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax *
+                (d + lambda)))))-1)/(exp(ymax-y0)))),
+                start=list(mmax=0.1, ymax=max(y)))
+baranyi_param_025M <- coef(fit_025M)
+print(baranyi_param_025M)
+coef_025 <- c(min(y), baranyi_param_025M[1], 3, baranyi_param_025M[2])
+y_025M <- baranyi(coef_025, d)
+tab025_graf <- cbind.data.frame(d, y, y_025M, erro_025)
+graf_025 <- ggplot(tab025_graf, aes(x=d))+
+  geom_point(aes(y=y))+
+  geom_line(aes(y=y_025M))+
+  geom_errorbar(aes(ymin=y-erro_025, ymax=y+erro_025), width=.3)+
+  theme_bw()+
+  ggtitle('Baranyi - 0,25M (lag fixada)')+
+  labs(
+    x='Time (hours)',
+    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
 graf_025
-ggsave('0,25M-Gompertz3.png')
+summary(fit_025M)
+ggsave('graf_025.png', graf_025)
 
-
-# 0,5M fitado com Gompertz de 3 parâmetros (fixando lag=0)
-tab_05 <- filter(ms1655_graf, conc=='0.5 mol/L')
-tab05 <- tab_05[,-2]
-tab05$erro <- (tab05$erro)/(tab05$media*log(10))
-tab05$media <- log10(tab05$media)
-
-p05 <- c(y0=tab05[1,2], mumax=0.2, K=max(tab05$media), lambda=0)
-fit05 <- fit_growthmodel(FUN=grow_gompertz3, p=p05, tab05$tempo, tab05$media, transform="log", which=c('y0', 'mumax', 'K'))
-param_05 <- coef(fit05)
-summary(fit05)
-
-tab05_graf <- grow_gompertz3(tab05$tempo, param_05)
-tab05_graf <- cbind.data.frame(tab05_graf, tab05$media, tab05$erro)
-graf_05 <- ggplot(tab05_graf, aes(x=time))+   # Faz gráfico de linha (fit) e pontos (dados experimentais) sobrepostos
-    geom_point(aes(y=tab05$media))+
-    geom_line(aes(y=y))+
-    geom_errorbar(aes(ymin=tab05$media-tab05$erro, ymax=tab05$media+tab05$erro), width=.3)+
-    theme_bw()+
-    ggtitle('0,5M - Gompertz3 (lag fixada)')+
-    labs(
-      x='Time (hours)',
-      y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+# 0,5M fitado manualmente (Baranyi)
+tab_05 <- filter(ms1655_graf, conc=='0.5 mol/L')   # Pega informações apenas da concentração desejada
+d <- tab_05$tempo
+erro_05 <- (tab_05$erro)/(tab_05$media*log(10))
+y <- log10(tab_05$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+lambda <- 3.5
+y0 <- min(y)
+fit_05M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
+                log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax *
+                (d + lambda)))))-1)/(exp(ymax-y0)))),
+                start=list( mmax=0.1, ymax=max(y)))
+baranyi_param_05M <- coef(fit_05M)
+print(baranyi_param_05M)
+coef_05 <- c(min(y), baranyi_param_05M[1], 3.5 , baranyi_param_05M[2])
+y_05M <- baranyi(coef_05, d)
+tab05_graf <- cbind.data.frame(d, y, y_05M, erro_05)
+graf_05 <- ggplot(tab05_graf, aes(x=d))+
+  geom_point(aes(y=y))+
+  geom_line(aes(y=y_05M))+
+  geom_errorbar(aes(ymin=y-erro_05, ymax=y+erro_05), width=.3)+
+  theme_bw()+
+  ggtitle('Baranyi - 0,5M (lag fixada)')+
+  labs(
+    x='Time (hours)',
+    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
 graf_05
-ggsave('0,5M-Gompertz3.png')
+summary(fit_05M)
+ggsave('graf_05.png', graf_05)
 
-
-
-# 0,75M fitado com Gompertz de 3 parâmetros (sem fixar lag)
-tab_075 <- filter(ms1655_graf, conc=='0.75 mol/L')
-tab075 <- tab_075[,-2]
-tab075$erro <- (tab075$erro)/(tab075$media*log(10))
-tab075$media <- log10(tab075$media)
-
-p075 <- c(y0=tab075[1,2], mumax=0.2, K=max(tab075$media), lambda=0)
-fit075 <- fit_growthmodel(FUN=grow_gompertz3, p=p075, tab075$tempo, tab075$media, transform="log")
-param_075 <- coef(fit075)
-summary(fit075)
-
-tab075_graf <- grow_gompertz3(tab075$tempo, param_075)
-tab075_graf <- cbind.data.frame(tab075_graf, tab075$media, tab075$erro)
-graf_075 <- ggplot(tab075_graf, aes(x=time))+   # Faz gráfico de linha (fit) e pontos (dados experimentais) sobrepostos
-    geom_point(aes(y=tab075$media))+
-    #geom_line(aes(y=y))+
-    geom_errorbar(aes(ymin=tab075$media-tab075$erro, ymax=tab075$media+tab075$erro), width=.3)+
-    theme_bw()+
-    ggtitle('0,75M - Gompertz3')+
-    labs(
-      x='Time (hours)',
-      y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+# 0,75M fitado manualmente (Baranyi)
+tab_075 <- filter(ms1655_graf, conc=='0.75 mol/L')   # Pega informações apenas da concentração desejada
+d <- tab_075$tempo
+erro_075 <- (tab_075$erro)/(tab_075$media*log(10))
+y <- log10(tab_075$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+y0 <- min(y)
+fit_075M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
+                log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax *
+                (d + lambda)))))-1)/(exp(ymax-y0)))),
+                start=list(mmax=0.1, lambda=4, ymax=max(y)))
+baranyi_param_075M <- coef(fit_075M)
+print(baranyi_param_075M)
+coef_075 <- c(min(y), baranyi_param_075M[1], baranyi_param_075M[2], baranyi_param_075M[3])
+y_075M <- baranyi(coef_075, d)
+tab075_graf <- cbind.data.frame(d, y, y_075M, erro_075)
+graf_075 <- ggplot(tab075_graf, aes(x=d))+
+  geom_point(aes(y=y))+
+  geom_line(aes(y=y_075M))+
+  geom_errorbar(aes(ymin=y-erro_075, ymax=y+erro_075), width=.3)+
+  theme_bw()+
+  ggtitle('Baranyi - 0,75M')+
+  labs(
+    x='Time (hours)',
+    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
 graf_075
-ggsave('0,75M-Gompertz3_pontos.png')
+summary(fit_075M)
+ggsave('graf_075.png', graf_075)
 
-
-# 1M fitado com Gompertz de 3 parâmetros (sem fixar lag)
-tab_1 <- filter(ms1655_graf, conc=='1 mol/L')
-tab1 <- tab_1[,-2]
-tab1$erro <- (tab1$erro)/(tab1$media*log(10))
-tab1$media <- log10(tab1$media)
-
-p1 <- c(y0=tab1[1,2], mumax=0.2, K=max(tab1$media), lambda=5)
-fit1 <- fit_growthmodel(FUN=grow_gompertz3, p=p1, tab1$tempo, tab1$media, transform="log")
-param_1 <- coef(fit1)
-summary(fit1)
-
-tab1_graf <- grow_gompertz3(tab1$tempo, param_1)
-tab1_graf <- cbind.data.frame(tab1_graf, tab1$media, tab1$erro)
-graf_1 <- ggplot(tab1_graf, aes(x=time))+   # Faz gráfico de linha (fit) e pontos (dados experimentais) sobrepostos
-    geom_point(aes(y=tab1$media))+
-    geom_line(aes(y=y))+
-    geom_errorbar(aes(ymin=tab1$media-tab1$erro, ymax=tab1$media+tab1$erro), width=.3)+
-    theme_bw()+
-    ggtitle('1M - Gompertz3')+
-    labs(
-      x='Time (hours)',
-      y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+# 1M fitado manualmente (Baranyi)
+tab_1 <- filter(ms1655_graf, conc=='1 mol/L')   # Pega informações apenas da concentração desejada
+d <- tab_1$tempo
+erro_1 <- (tab_1$erro)/(tab_1$media*log(10))
+y <- log10(tab_1$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+y0 <- min(y)
+fit_1M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
+                log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax *
+                (d + lambda)))))-1)/(exp(ymax-y0)))),
+                start=list(mmax=0.1, lambda=4, ymax=max(y)))
+baranyi_param_1M <- coef(fit_1M)
+print(baranyi_param_1M)
+coef_1 <- c(min(y), baranyi_param_1M[1], baranyi_param_1M[2], baranyi_param_1M[3])
+y_1M <- baranyi(coef_1, d)
+tab1_graf <- cbind.data.frame(d, y, y_1M, erro_1)
+graf_1 <- ggplot(tab1_graf, aes(x=d))+
+  geom_point(aes(y=y))+
+  geom_line(aes(y=y_1M))+
+  geom_errorbar(aes(ymin=y-erro_1, ymax=y+erro_1), width=.3)+
+  theme_bw()+
+  ggtitle('Baranyi - 1M')+
+  labs(
+    x='Time (hours)',
+    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
 graf_1
-ggsave('1M-Gompertz3.png')
+summary(fit_1M)
+ggsave('graf_1.png', graf_1)
 
-
-# 1,25M fitado com Gompertz de 3 parâmetros (sem fixar lag)
-tab_125 <- filter(ms1655_graf, conc=='1.25 mol/L')
-tab125 <- tab_125[,-2]
-tab125$erro <- (tab125$erro)/(tab125$media*log(10))
-tab125$media <- log10(tab125$media)
-
-p125 <- c(y0=tab125[1,2], mumax=0.2, K=max(tab125$media), lambda=5)
-fit125 <- fit_growthmodel(FUN=grow_gompertz3, p=p125, tab125$tempo, tab125$media, transform="log")
-param_125 <- coef(fit125)
-summary(fit125)
-
-tab125_graf <- grow_gompertz3(tab125$tempo, param_125)
-tab125_graf <- cbind.data.frame(tab125_graf, tab125$media, tab125$erro)
-graf_125 <- ggplot(tab125_graf, aes(x=time))+   # Faz gráfico de linha (fit) e pontos (dados experimentais) sobrepostos
-    geom_point(aes(y=tab125$media))+
-    geom_line(aes(y=y))+
-    geom_errorbar(aes(ymin=tab125$media-tab125$erro, ymax=tab125$media+tab125$erro), width=.3)+
-    theme_bw()+
-    ggtitle('1,25M - Gompertz3')+
-    labs(
-      x='Time (hours)',
-      y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+# 1,25M fitado manualmente (Baranyi)
+tab_125 <- filter(ms1655_graf, conc=='1.25 mol/L')   # Pega informações apenas da concentração desejada
+d <- tab_125$tempo
+erro_125 <- (tab_125$erro)/(tab_125$media*log(10))
+y <- log10(tab_125$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+y0 <- min(y)
+fit_125M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
+                log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
+                exp(-mmax * lambda) - exp(-mmax *
+                (d + lambda)))))-1)/(exp(ymax-y0)))),
+                start=list(mmax=0.1, lambda=10, ymax=max(y)))
+baranyi_param_125M <- coef(fit_125M)
+print(baranyi_param_125M)
+coef_125 <- c(y0, baranyi_param_125M[1], baranyi_param_125M[2], baranyi_param_125M[3])
+y_125M <- baranyi(coef_125, d)
+tab125_graf <- cbind.data.frame(d, y, y_125M, erro_125)
+graf_125 <- ggplot(tab125_graf, aes(x=d))+
+  geom_point(aes(y=y))+
+  geom_line(aes(y=y_125M))+
+  geom_errorbar(aes(ymin=y-erro_125, ymax=y+erro_125), width=.3)+
+  theme_bw()+
+  ggtitle('Baranyi - 1,25M')+
+  labs(
+    x='Time (hours)',
+    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
 graf_125
-ggsave('1,25M-Gompertz3.png')
+summary(fit_125M)
+ggsave('graf_125.png', graf_125)
+
+
+
 
 
 # Gráfico de velocidades de Crescimento
