@@ -32,6 +32,19 @@ baranyi <- function(params, x) {
     (exp(params[4]-params[1]))))
 }
 
+log10_minor_break = function (...){
+  function(x) {
+    minx         = floor(min(log10(x), na.rm=T))-1;
+    maxx         = ceiling(max(log10(x), na.rm=T))+1;
+    n_major      = maxx-minx+1;
+    major_breaks = seq(minx, maxx, by=1)
+    minor_breaks =
+      rep(log10(seq(1, 9, by=1)), times = n_major)+
+      rep(major_breaks, each = 9)
+    return(10^(minor_breaks))
+  }
+}
+
 # ********** LEITURA E PRÉ-PROCESSAMENTO **********
 
 # Lê tabela em TSV, vírgula como decimal e primeira linha como cabeçalho
@@ -77,30 +90,21 @@ media_total_ms1655 <- rowMeans(medias_ms1655, na.rm=TRUE)    # Cria vetor da mé
 erro_quadrado_ms1655 <- cbind((1/3*erro_ms1655_1)^2, (1/3*erro_ms1655_2)^2, (1/3*erro_ms1655_3)^2)    # Cria tabela com os erros padrões de cada replicata ao quadrado
 erro_total_ms1655 <- sqrt(rowSums(erro_quadrado_ms1655, na.rm=TRUE))   # Cria vetor com erro associado a tirar a média entre replicatas
 tempo_total_ms1655 <- rep(0:24, each=10)   #Cria vetor com tempo em horas para facilitar a gaficação
+
+
 conc_total_ms1655 <- rep(c('0 mol/L', '0.25 mol/L', '0.5 mol/L', '0.75 mol/L', '1 mol/L', '1.25 mol/L', '1.5 mol/L', '2 mol/L', '3 mol/L', '4 mol/L'), times=25)   # Cria vetor com concentraçãoes para conseguir colocar cada concentração em uma cor
 
 #ms1655_1$Conc. <- factor(ms1655_1$Conc., levels = c('0 mol/L', '0.5 mol/L', '1 mol/L', '1.25 mol/L', '1.5 mol/L', '2 mol/L', '3 mol/L', '4 mol/L'))
 ms1655_graf <- cbind.data.frame(tempo_total_ms1655, conc_total_ms1655, media_total_ms1655, erro_total_ms1655)
 
-log10_minor_break = function (...){
-  function(x) {
-    minx         = floor(min(log10(x), na.rm=T))-1;
-    maxx         = ceiling(max(log10(x), na.rm=T))+1;
-    n_major      = maxx-minx+1;
-    major_breaks = seq(minx, maxx, by=1)
-    minor_breaks =
-      rep(log10(seq(1, 9, by=1)), times = n_major)+
-      rep(major_breaks, each = 9)
-    return(10^(minor_breaks))
-  }
-}
 
-graf_total<- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655, color=conc_total_ms1655)) +
+
+graf_total <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655, color=conc_total_ms1655)) +
     geom_point(size=1.5, aes(shape=conc_total_ms1655))+
-    geom_line(size=.7)+
+    geom_line(linewidth=.7)+
     geom_errorbar(aes(ymin=media_total_ms1655-erro_total_ms1655, ymax=media_total_ms1655+erro_total_ms1655), width=0.15, size=.5)+
     theme_bw()+
-    labs(x='Time (h)', y='CFU/mL', color='', shape='')+
+    labs(x='Time (h)', y=expression(CFU.mL^{-1}), color='', shape='')+
     theme(
       panel.grid.major = element_line(size=.5),
       panel.grid.minor = element_line(size=.2))+
@@ -115,13 +119,75 @@ graf_total<- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655,
                  )+
     scale_shape_manual(values=c(15,4,17,13,19,10,11,12,18,16))+
     scale_color_viridis(discrete=TRUE, option='turbo')
-
+graf_total
 ggsave('mg1655_continuo.png')
 
 
+graf_cinza <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655, color=conc_total_ms1655)) +
+    geom_point(size=2, aes(shape=conc_total_ms1655))+
+    geom_line(linewidth=.4)+
+    geom_errorbar(aes(ymin=media_total_ms1655-erro_total_ms1655, ymax=media_total_ms1655+erro_total_ms1655), width=0.15, size=.5)+
+    theme_bw()+
+    labs(x='Time (h)', y=expression(CFU.mL^{-1}), color='', shape='')+
+    theme(
+      panel.grid.major = element_line(size=.3),
+      panel.grid.minor = element_line(size=.1))+
+    #  legend.title = element_text(size=12, family='mono'),
+    #  legend.text = element_text(size = 10, family='sans'),
+    #  axis.text = element_text(colour = 'black', size=10, family='sans'),
+    #  axis.title = element_text(size=12, family='sans'))+
+    scale_y_log10(#limits = c(10, NA),
+                   labels = trans_format("log10", math_format(10^.x)),
+                   breaks=trans_breaks("log10", function(x) 10^x, n=8),
+                   minor_breaks=log10_minor_break()
+                 )+
+    scale_shape_manual(values=c(15,19,17,23,4,8,14,3,19,15))+
+    scale_color_manual(values=c('gray0', 'gray50', 'gray10', 'gray55', 'gray20', 'gray60', 'gray30', 'gray65', 'gray40', 'gray70'))
+    #scale_color_grey(start=0, end=.8)
+graf_cinza
+ggsave('mg1655_junto_cinza.png')
+
+
+facet_name <- as_labeller(c('0 mol/L'='0.00~mol.L^-1','0.25 mol/L'='0.25~mol.L^-1', '0.5 mol/L'='0.50~mol.L^-1', '0.75 mol/L'='0.75~mol.L^-1', '1 mol/L'='1.00~mol.L^-1', '1.25 mol/L'='1.25~mol.L^-1', '1.5 mol/L'='1.50~mol.L^-1', '2 mol/L'='2.00~mol.L^-1', '3 mol/L'='3.00~mol.L^-1', '4 mol/L'='4.00~mol.L^-1'), default=label_parsed)
+
+graf_facet <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655, color=conc_total_ms1655)) +
+    geom_point(size=.8)+
+    geom_line(linewidth=.4)+
+    geom_errorbar(aes(ymin=media_total_ms1655-erro_total_ms1655, ymax=media_total_ms1655+erro_total_ms1655), width=0.15, size=.5)+
+    facet_wrap(~conc_total_ms1655, labeller=facet_name)+
+    theme_bw()+
+    labs(x='Time (h)', y=expression(CFU.mL^{-1}))+
+    theme(
+      panel.grid.major = element_line(size=.2),
+      panel.grid.minor = element_line(size=.1),
+      legend.position = "none")+
+    scale_y_log10(#limits = c(10, NA),
+                   labels = trans_format("log10", math_format(10^.x)),
+                   breaks=trans_breaks("log10", function(x) 10^x, n=8),
+                   minor_breaks=log10_minor_break())+
+    scale_color_viridis(discrete=TRUE, option='turbo')
+graf_facet
+ggsave('mg1655_facet.png', graf_facet, device='png', unit='cm', width=20, height=16)
+
+graf_facet_cinza <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655)) +
+    geom_point(size=.5, shape=1)+
+    geom_line(linewidth=.2)+
+    geom_errorbar(aes(ymin=media_total_ms1655-erro_total_ms1655, ymax=media_total_ms1655+erro_total_ms1655), width=0.15, size=.5)+
+    facet_wrap(~conc_total_ms1655, labeller=facet_name, ncol=2)+
+    theme_bw()+
+    labs(x='Time (h)', y=expression(CFU.mL^{-1}))+
+    theme(
+      panel.grid.major = element_line(size=.2),
+      panel.grid.minor = element_line(size=.1),
+      legend.position = "none")+
+    scale_y_log10(limits = c(100, 10000000000),
+                   labels = trans_format("log10", math_format(10^.x)),
+                   breaks=trans_breaks("log10", function(x) 10^x, n=5),
+                   minor_breaks=log10_minor_break())
+graf_facet_cinza
+ggsave('mg1655_facet_cinza.png', graf_facet_cinza, device='png', unit='cm', width=10, height=20)
 
 # ********** MODELAGEM **********
-# Criando tabelas para modelagem usando pacote growthrates
 colnames(ms1655_graf) <- c('tempo', 'conc', 'media', 'erro')    # Renomeia as colunas para ficar mais fácil a manipulação
 
 # 0M fitado manualmente (Baranyi)
@@ -154,6 +220,7 @@ graf_0 <- ggplot(tab0_graf, aes(x=d))+
 graf_0
 summary(fit_0M)
 ggsave('graf_0.png', graf_0)
+
 
 # 0,25M fitado manualmente (Baranyi)
 tab_025 <- filter(ms1655_graf, conc=='0.25 mol/L')   # Pega informações apenas da concentração desejada
@@ -310,11 +377,10 @@ ggsave('graf_125.png', graf_125)
 
 
 
-
 # Gráfico de velocidades de Crescimento
-mumax <- c(param_0[2], param_025[2], param_05[2], param_075[2], param_1[2], param_125[2])
+mumax <- c(summary(fit_0M)$parameters[1,1], summary(fit_025M)$parameters[1,1], summary(fit_05M)$parameters[1,1], summary(fit_075M)$parameters[1,1], summary(fit_1M)$parameters[1,1], summary(fit_125M)$parameters[1,1])
 conc <- c(0, 0.25, 0.5, 0.75, 1, 1.25)
-erro_mu <- c(0.005265, 0.006495, 0.005802, 0.004528, 0.003579, 0.00111)
+erro_mu <- c(summary(fit_0M)$parameters[1,2], summary(fit_025M)$parameters[1,2], summary(fit_05M)$parameters[1,2], summary(fit_075M)$parameters[1,2], summary(fit_1M)$parameters[1,2], summary(fit_125M)$parameters[1,2])
 tab_mu <- cbind.data.frame(mumax, erro_mu, conc)
 graf_mu <- ggplot(tab_mu, aes(x=conc, y=mumax))+
     geom_point()+
@@ -323,7 +389,7 @@ graf_mu <- ggplot(tab_mu, aes(x=conc, y=mumax))+
     theme_bw()+
     labs(
       x=expression(paste('[NaCl] (mol.L)'^'-1')),
-      y=expression(paste(mu['max']))
-    )
+      y=expression(paste(mu['max'])))+
+    scale_x_continuous(breaks=c(0, 0.25, 0.5, 0.75, 1, 1.25))
 graf_mu
-ggsave('mu.png')
+ggsave('mu.png', graf_mu, device='png', unit='cm', width=7, height=7, dpi=300)
