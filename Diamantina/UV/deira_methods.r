@@ -36,6 +36,18 @@ calc_erro_medcor <- function(data, col_indices) {     # col_indices -> numero de
   return(erro)
 }
 
+log10_minor_break = function (...){
+  function(x) {
+    minx         = floor(min(log10(x), na.rm=T))-1;
+    maxx         = ceiling(max(log10(x), na.rm=T))+1;
+    n_major      = maxx-minx+1;
+    major_breaks = seq(minx, maxx, by=1)
+    minor_breaks =
+      rep(log10(seq(1, 9, by=1)), times = n_major)+
+      rep(major_breaks, each = 9)
+    return(10^(minor_breaks))
+  }
+}
 #********** LEITURA **********
 deira <- read.table("deira.tsv", sep='\t', dec=',', quote='', header=TRUE, fill=TRUE)
 
@@ -65,14 +77,16 @@ erro_sob <- sqrt((sob^2) * (((erro_rep / media_rep)^2) + ((erro0 / media0)^2)))
 tabgraf <- cbind.data.frame(rep1$Dose, rep1$Exp, sob, erro_sob)
 colnames(tabgraf) <- c('Dose', 'Exp', 'sob', 'erro')
 
-graf<- ggplot(tabgraf, aes(x=Dose, y=sob, color=Exp)) +
-    geom_point(size=.6)+   # Coloca as bolinhas
-    geom_line(linewidth=.35)+   # Coloca as linhas
-    geom_errorbar(aes(ymin=sob-erro, ymax=sob+erro), width=0.5, linewidth=.5)+    # Coloca as barras de erro
+graf<- ggplot(tabgraf, aes(x=Dose, y=sob, color=Exp, shape=Exp)) +
+    geom_point(size=.75)+   # Coloca as bolinhas
+    geom_line(linewidth=.25)+   # Coloca as linhas
+    geom_errorbar(aes(ymin=sob-erro, ymax=sob+erro), width=0.5, linewidth=.2)+    # Coloca as barras de erro
     theme_bw()+   # Muda a aparência para o tema certo
     xlab(bquote("Dose"~(J.m^-2)))+    # Coloca o nome do eixo x
     ylab(bquote("Sobrevivência"~(N/N[0])))+    # Coloca o nome do eixo y
-    scale_color_manual(values=c('darkred', 'seagreen3'), name='', labels=c('Líquido', 'Sólido'))+
+    scale_color_manual(values=c('springgreen3', 'black'),labels=c('Líquido', 'Sólido'))+
+    scale_shape_manual(values=c(16, 15),labels=c('Líquido', 'Sólido'))+
+    labs(shape='', color='')+
     theme(
       panel.grid.major = element_line(size=.3),   # Define largura da linha maior do grid interno no gráfico
       panel.grid.minor = element_line(size=.1),   # Define largura da linha menor do grid interno do gráfico
@@ -81,7 +95,8 @@ graf<- ggplot(tabgraf, aes(x=Dose, y=sob, color=Exp)) +
       axis.text = element_text(size=8))+
     scale_y_log10(limits = c(1e-5,10),   # Transforma o eixo y em log10 com limites de 1 a 10^-5
                   labels = trans_format("log10", math_format(10^.x)),
-                   breaks = trans_breaks("log10", function(x) 10^x, n=5))+
+                   breaks = trans_breaks("log10", function(x) 10^x, n=5),
+                   minor_breaks=log10_minor_break())+
     scale_x_continuous(breaks=c(0, 500, 1000, 1500, 2000, 2500, 3000))
 graf
 ggsave('irrad_deira.png', graf, device='png', unit='cm', width = 12, height = 6.5, dpi=300)
