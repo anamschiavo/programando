@@ -193,19 +193,19 @@ colnames(ms1655_graf) <- c('tempo', 'conc', 'media', 'erro')    # Renomeia as co
 # 0M fitado manualmente (Baranyi)
 tab_0 <- filter(ms1655_graf, conc=='0 mol/L')   # Pega informações apenas da concentração desejada
 d <- tab_0$tempo
-erro_0 <- (tab_0$erro)/(tab_0$media*log(10))
-y <- log10(tab_0$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
-lambda <- 3
+erro_0 <- (tab_0$erro)/(tab_0$media)
+y <- log(tab_0$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+lambda <- 1.5
 y0 <- min(y)
 fit_0M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
                 log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax *
                 (d + lambda)))))-1)/(exp(ymax-y0)))),
-                start=list(mmax=0.1, ymax=max(y)))
+                start=list(mmax=0.5, ymax=max(y)))
 baranyi_param_0M <- coef(fit_0M)
 print(baranyi_param_0M)
-coef_0 <- c(min(y), baranyi_param_0M[1], 3, baranyi_param_0M[2])
+coef_0 <- c(min(y), baranyi_param_0M[1], 1.5, baranyi_param_0M[2])
 y_0M <- baranyi(coef_0, d)
 tab0_graf <- cbind.data.frame(d, y, y_0M, erro_0)
 graf_0 <- ggplot(tab0_graf, aes(x=d))+
@@ -216,7 +216,7 @@ graf_0 <- ggplot(tab0_graf, aes(x=d))+
   ggtitle('Baranyi - 0M (lag fixada 2)')+
   labs(
     x='Time (hours)',
-    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+    y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_0
 summary(fit_0M)
 ggsave('graf_0.png', graf_0)
@@ -225,19 +225,19 @@ ggsave('graf_0.png', graf_0)
 # 0,25M fitado manualmente (Baranyi)
 tab_025 <- filter(ms1655_graf, conc=='0.25 mol/L')   # Pega informações apenas da concentração desejada
 d <- tab_025$tempo
-erro_025 <- (tab_025$erro)/(tab_025$media*log(10))
-y <- log10(tab_025$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
-lambda <- 3
+erro_025 <- (tab_025$erro)/(tab_025$media)
+y <- log(tab_025$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+lambda <- 1.5
 y0 <- min(y)
 fit_025M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
                 log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax *
                 (d + lambda)))))-1)/(exp(ymax-y0)))),
-                start=list(mmax=0.1, ymax=max(y)))
+                start=list(mmax=0.6, ymax=max(y)))
 baranyi_param_025M <- coef(fit_025M)
 print(baranyi_param_025M)
-coef_025 <- c(min(y), baranyi_param_025M[1], 3, baranyi_param_025M[2])
+coef_025 <- c(min(y), baranyi_param_025M[1], 1.5, baranyi_param_025M[2])
 y_025M <- baranyi(coef_025, d)
 tab025_graf <- cbind.data.frame(d, y, y_025M, erro_025)
 graf_025 <- ggplot(tab025_graf, aes(x=d))+
@@ -248,7 +248,7 @@ graf_025 <- ggplot(tab025_graf, aes(x=d))+
   ggtitle('Baranyi - 0,25M (lag fixada)')+
   labs(
     x='Time (hours)',
-    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+    y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_025
 summary(fit_025M)
 ggsave('graf_025.png', graf_025)
@@ -256,19 +256,19 @@ ggsave('graf_025.png', graf_025)
 # 0,5M fitado manualmente (Baranyi)
 tab_05 <- filter(ms1655_graf, conc=='0.5 mol/L')   # Pega informações apenas da concentração desejada
 d <- tab_05$tempo
-erro_05 <- (tab_05$erro)/(tab_05$media*log(10))
-y <- log10(tab_05$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
-lambda <- 3.5
+erro_05 <- (tab_05$erro)/(tab_05$media)
+y <- log(tab_05$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+lambda <- 2
 y0 <- min(y)
 fit_05M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
                 log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax *
                 (d + lambda)))))-1)/(exp(ymax-y0)))),
-                start=list( mmax=0.1, ymax=max(y)))
+                start=list( mmax=1.5, ymax=max(y)))
 baranyi_param_05M <- coef(fit_05M)
 print(baranyi_param_05M)
-coef_05 <- c(min(y), baranyi_param_05M[1], 3.5 , baranyi_param_05M[2])
+coef_05 <- c(min(y), baranyi_param_05M[1], 2 , baranyi_param_05M[2])
 y_05M <- baranyi(coef_05, d)
 tab05_graf <- cbind.data.frame(d, y, y_05M, erro_05)
 graf_05 <- ggplot(tab05_graf, aes(x=d))+
@@ -279,7 +279,7 @@ graf_05 <- ggplot(tab05_graf, aes(x=d))+
   ggtitle('Baranyi - 0,5M (lag fixada)')+
   labs(
     x='Time (hours)',
-    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+    y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_05
 summary(fit_05M)
 ggsave('graf_05.png', graf_05)
@@ -287,15 +287,15 @@ ggsave('graf_05.png', graf_05)
 # 0,75M fitado manualmente (Baranyi)
 tab_075 <- filter(ms1655_graf, conc=='0.75 mol/L')   # Pega informações apenas da concentração desejada
 d <- tab_075$tempo
-erro_075 <- (tab_075$erro)/(tab_075$media*log(10))
-y <- log10(tab_075$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+erro_075 <- (tab_075$erro)/(tab_075$media)
+y <- log(tab_075$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
 y0 <- min(y)
 fit_075M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
                 log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax *
                 (d + lambda)))))-1)/(exp(ymax-y0)))),
-                start=list(mmax=0.1, lambda=4, ymax=max(y)))
+                start=list(mmax=0.7, lambda=4, ymax=max(y)))
 baranyi_param_075M <- coef(fit_075M)
 print(baranyi_param_075M)
 coef_075 <- c(min(y), baranyi_param_075M[1], baranyi_param_075M[2], baranyi_param_075M[3])
@@ -309,7 +309,7 @@ graf_075 <- ggplot(tab075_graf, aes(x=d))+
   ggtitle('Baranyi - 0,75M')+
   labs(
     x='Time (hours)',
-    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+    y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_075
 summary(fit_075M)
 ggsave('graf_075.png', graf_075)
@@ -317,15 +317,15 @@ ggsave('graf_075.png', graf_075)
 # 1M fitado manualmente (Baranyi)
 tab_1 <- filter(ms1655_graf, conc=='1 mol/L')   # Pega informações apenas da concentração desejada
 d <- tab_1$tempo
-erro_1 <- (tab_1$erro)/(tab_1$media*log(10))
-y <- log10(tab_1$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+erro_1 <- (tab_1$erro)/(tab_1$media)
+y <- log(tab_1$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
 y0 <- min(y)
 fit_1M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
                 log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax *
                 (d + lambda)))))-1)/(exp(ymax-y0)))),
-                start=list(mmax=0.1, lambda=4, ymax=max(y)))
+                start=list(mmax=0.7, lambda=8, ymax=max(y)))
 baranyi_param_1M <- coef(fit_1M)
 print(baranyi_param_1M)
 coef_1 <- c(min(y), baranyi_param_1M[1], baranyi_param_1M[2], baranyi_param_1M[3])
@@ -339,7 +339,7 @@ graf_1 <- ggplot(tab1_graf, aes(x=d))+
   ggtitle('Baranyi - 1M')+
   labs(
     x='Time (hours)',
-    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+    y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_1
 summary(fit_1M)
 ggsave('graf_1.png', graf_1)
@@ -347,15 +347,15 @@ ggsave('graf_1.png', graf_1)
 # 1,25M fitado manualmente (Baranyi)
 tab_125 <- filter(ms1655_graf, conc=='1.25 mol/L')   # Pega informações apenas da concentração desejada
 d <- tab_125$tempo
-erro_125 <- (tab_125$erro)/(tab_125$media*log(10))
-y <- log10(tab_125$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
+erro_125 <- (tab_125$erro)/(tab_125$media)
+y <- log(tab_125$media)   # Transforma média em log10(média). Aparentemente os modelos fitam melhor com a transformação
 y0 <- min(y)
 fit_125M <- nls(y ~ y0 + mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax * (d + lambda)))) -
                 log(1 + ((exp(mmax * (d + (1/mmax) * log(exp(-mmax*d) +
                 exp(-mmax * lambda) - exp(-mmax *
                 (d + lambda)))))-1)/(exp(ymax-y0)))),
-                start=list(mmax=0.1, lambda=10, ymax=max(y)))
+                start=list(mmax=0.4, lambda=10, ymax=max(y)))
 baranyi_param_125M <- coef(fit_125M)
 print(baranyi_param_125M)
 coef_125 <- c(y0, baranyi_param_125M[1], baranyi_param_125M[2], baranyi_param_125M[3])
@@ -369,7 +369,7 @@ graf_125 <- ggplot(tab125_graf, aes(x=d))+
   ggtitle('Baranyi - 1,25M')+
   labs(
     x='Time (hours)',
-    y=expression(paste('log'['10']*'(UFC.mL'^'-1'*')')))
+    y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_125
 summary(fit_125M)
 ggsave('graf_125.png', graf_125)
@@ -393,3 +393,5 @@ graf_mu <- ggplot(tab_mu, aes(x=conc, y=mumax))+
     scale_x_continuous(breaks=c(0, 0.25, 0.5, 0.75, 1, 1.25))
 graf_mu
 ggsave('mu.png', graf_mu, device='png', unit='cm', width=7, height=7, dpi=300)
+
+write.table(tab_mu, file='mumax_tab.tsv', sep='\t', row.names=FALSE, dec=',')
