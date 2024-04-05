@@ -385,12 +385,16 @@ tab_mu <- cbind.data.frame(mumax, erro_mu, conc)
 graf_mu <- ggplot(tab_mu, aes(x=conc, y=mumax))+
     geom_point()+
     geom_line()+
-    geom_errorbar(aes(ymin=mumax-erro_mu, ymax=mumax+erro_mu), width=.01)+
+    geom_errorbar(aes(ymin=mumax-erro_mu, ymax=mumax+erro_mu), width=.05)+
     theme_bw()+
     labs(
       x=expression(paste('[NaCl] (mol.L)'^'-1')),
       y=expression(paste(mu['max'])))+
-    scale_x_continuous(breaks=c(0, 0.25, 0.5, 0.75, 1, 1.25))
+    scale_x_continuous(breaks=c(0, 0.25, 0.5, 0.75, 1, 1.25))+
+    theme(
+      panel.grid.major = element_line(size=.25),   # Define largura da linha maior do grid interno no gráfico
+      panel.grid.minor = element_line(size=.1),   # Define largura da linha menor do grid interno do gráfico
+      axis.title.y = element_text(size=12))
 graf_mu
 ggsave('mu.png', graf_mu, device='png', unit='cm', width=7, height=7, dpi=300)
 
