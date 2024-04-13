@@ -172,8 +172,12 @@ ggsave('fit_16a_010_7.png', graf_fit_16a_010_7, device='png', unit='cm', width =
 # Isolado D17b.30.010-2
 d17b_30_010_2 <- filter(tabgraf, isolado=='D17b.30.010-2')
 y_17b_010_2 <- d17b_30_010_2$sob
+f <-0
+
+
 fit_17b_010_2 <- nls(y_17b_010_2 ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
-			        start = list(LD10 = 200, n = 2))
+              start = list(LD10 = 200, n = 2))
+
 summary(fit_17b_010_2)
 ld10 <- append(ld10, summary(fit_17b_010_2)$parameters[1,1] , after=length(ld10))
 se_ld10 <- append(se_ld10, summary(fit_17b_010_2)$parameters[1,2] , after=length(se_ld10))
