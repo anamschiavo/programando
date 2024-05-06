@@ -58,28 +58,27 @@ mc <- calc_media_corrigida(deira, col_indices)
 erro_mc <- calc_erro_medcor(deira, col_indices)
 
 tab_medias <- cbind.data.frame(deira, mc, erro_mc)
+tab0 <- filter(tab_medias, Dose=='0')
 
-rep1 <- filter(tab_medias, Replicata=='2')
-rep2 <- filter(tab_medias, Replicata=='3')
-rep3 <- filter(tab_medias, Replicata=='4')
+media0 <- rep(tab0$mc, each=10)
+erro0 <- rep(tab0$erro_mc, each=10)
+sob <- mc/media0
+erro_sob <- sqrt((sob^2) * (((erro_mc / mc)^2) + ((erro0 / media0)^2)))
+tab_total <- cbind.data.frame(tab_medias, sob, erro_sob)
 
-media_rep <- rowMeans(cbind(rep1$mc, rep2$mc, rep2$mc), na.rm = TRUE)
-erro_rep <- sqrt(rowSums(cbind((1/3*rep1$erro_mc)^2, (1/3*rep2$erro_mc)^2, (1/3*rep1$erro_mc)^2), na.rm = TRUE))
+rep1 <- filter(tab_total, Replicata=='2')
+rep2 <- filter(tab_total, Replicata=='3')
+rep3 <- filter(tab_total, Replicata=='4')
 
-tab <- cbind.data.frame(rep1$Dose, rep1$Exp, media_rep, erro_rep)
-tab0 <- filter(tab, rep1$Dose=='0')
-media0 <- rep(tab0$media_rep, each=10)
-erro0 <- rep(tab0$erro_rep, each=10)
+media_rep <- rowMeans(cbind(rep1$sob, rep2$sob, rep3$sob), na.rm = TRUE)
+erro_rep <- sqrt(rowSums(cbind((1/3*rep1$erro_sob)^2, (1/3*rep2$erro_sob)^2, (1/3*rep3$erro_sob)^2), na.rm = TRUE))
 
-sob <- media_rep/media0
-erro_sob <- sqrt((sob^2) * (((erro_rep / media_rep)^2) + ((erro0 / media0)^2)))
-
-tabgraf <- cbind.data.frame(rep1$Dose, rep1$Exp, sob, erro_sob)
+tabgraf <- cbind.data.frame(rep1$Dose, rep1$Exp, media_rep, erro_rep)
 colnames(tabgraf) <- c('Dose', 'Exp', 'sob', 'erro')
 
 graf<- ggplot(tabgraf, aes(x=Dose, y=sob, color=Exp, shape=Exp)) +
-    geom_point(size=.75)+   # Coloca as bolinhas
-    geom_line(linewidth=.25)+   # Coloca as linhas
+    geom_point(size=.6)+   # Coloca as bolinhas
+    geom_line(linewidth=.2)+   # Coloca as linhas
     geom_errorbar(aes(ymin=sob-erro, ymax=sob+erro), width=0.5, linewidth=.2)+    # Coloca as barras de erro
     theme_bw()+   # Muda a aparência para o tema certo
     xlab(bquote("Dose"~(J.m^-2)))+    # Coloca o nome do eixo x
@@ -111,7 +110,13 @@ y_sol <- tab_sol$sob
 fit_liq <- nls(y_liq ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
 			        start = list(LD10 = 1700, n = 6, f = 0.001))
 summary(fit_liq)
+fit_ld1_liq<- nls(y_liq ~ (1+f*x)/(1+(99+100*f*LD1)*exp(n*log(x/LD1))),
+			        start = list(LD1 = 2000, n = 6, f = 0.001))
+summary(fit_ld1_liq)
 
 fit_sol <- nls(y_sol ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
 			        start = list(LD10 = 1200, n = 6, f = 0.001))
 summary(fit_sol)
+fit_ld1_sol<- nls(y_sol ~ (1+f*x)/(1+(99+100*f*LD1)*exp(n*log(x/LD1))),
+			        start = list(LD1 = 1500, n = 6, f = 0.001))
+summary(fit_ld1_sol)
