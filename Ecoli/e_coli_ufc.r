@@ -71,6 +71,12 @@ calc_pseudo_R2 <- function(data, teor){   #data é vetor com os dados experiment
   return(pseudo_R2)
 }
 
+calc_mse <- function(data, teor){   #data é vetor com os dados experimentais e teor é vetor com y teórico pros mesmos valores de x
+  n <- length(data)
+  mse <- (1/n)*(sum((data-teor)^2))
+  return(mse)
+}
+
 # ********** LEITURA E PRÉ-PROCESSAMENTO **********
 
 # Lê tabela em TSV, vírgula como decimal e primeira linha como cabeçalho
@@ -451,3 +457,10 @@ pseudoR2_05M <- calc_pseudo_R2(y_05, y_baranyi_05)
 pseudoR2_075M <- calc_pseudo_R2(y_075, y_baranyi_075)
 pseudoR2_1M <- calc_pseudo_R2(y_1, y_baranyi_1)
 pseudoR2_125M <- calc_pseudo_R2(y_125, y_baranyi_125)
+
+mse_0M <- calc_mse(y_0, y_baranyi_0)
+mse_025M <- calc_mse(y_025, y_baranyi_025)
+mse_05M <- calc_mse(y_05, y_baranyi_05)
+mse_075M <- calc_mse(y_075, y_baranyi_075)
+mse_1M <- calc_mse(y_1, y_baranyi_1)
+mse_125M <- calc_mse(y_125, y_baranyi_125)

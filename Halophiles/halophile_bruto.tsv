@@ -1,4 +1,4 @@
-Espécie	Domínio	Mínimo opt	Máximo opt	Mínimo sup	Máximo sup	Classificação	Sal é NaCl?	Unidade	Outra condição	Referência	journal	Ano
+Espécie	Domínio	Mínimo opt	Máximo opt	Mínimo sup	Máximo sup	Classificação	Sal é NaCl?	Unidade	Checado?	Referência	journal	Ano
 Desulfosalsimonas propionicica	B	60	60		200	Moderate	s	g		JKjeldsen et al 2010	Micro Society	2010
 Sporosalibacterium faouarense	B	40	40	0	150	Moderate	s	g		Rezgui et al 2011	Micro Society	2011
 Glycocaulis abyssi	B	20	60	5	100	Moderate	s	g	Abyss	Abraham et al 2013	Micro Society	2013
@@ -217,7 +217,7 @@ Nesterenkonia halobia	B	1,712	1,712	0,514	4,281	Moderate	s	m		Ventosa et al. 199
 Bacillus chagannorensis	B	1,2	1,2	0,51	3,42	Moderate	s	m		Carrasco et al. 2007		
 Gracilibacillus saliphilus	B	1,71	2,57	0,17	3,77	Moderate	s	m		Tang et al. 2009		
 Aidingimonas halophila	B	0,86	1,71	0,17	4,28	Moderate	s	m		Wang et al. 2009		
-Methanohalophilus mahii	B	2	2	0,3	2,5	No Class	s	m	Metanogen	Paterek e Smith 1988		1988
+Methanohalophilus mahii	B	2	2	0,3	2,5	No Class	s	m	Metanogen	Paterek e Smith 1988	Micro Society	1988
 Halomonas marisflavae	B	0,08	2,05	0,08	4,62	No Class	s	m		Yoon et al. 2001	Micro Society	2001
 Thalassomonas viridans	B			0,51	0,68	No Class	s	m		Macián et al. 2001	Micro Society	2001
 Vibrio agarivorans	B	0,34	0,34	0,34	1,03	No Class	s	m		Mácian et al. 2001	Micro Society	2001
@@ -244,7 +244,7 @@ Halomonas neptunia	B	0,32	0,48	0,08	0,35	No Class	s	m		Kaye et al. 2004	Micro So
 Halomonas sulfidaeris	B	0,32	0,48	0,08	3,86	No Class	s	m		Kaye et al. 2004	Micro Society	2004
 Gramella echinicola	B			0,17	2,57	No Class	s	m		Nedashkovskaya et al 2005	Micro Society	2005
 Arcobacter halophilus	B	0,6	0,6	0,34		No Class	s	m		Donachie et al. 2005	Micro Society	2005
-Alcanivorax dieselolei	B	0,51	1,28	0,17	2,57	No Class	s	m		Lio and Shao 2005	Micro Society	2005
+Alloalcanivorax dieselolei	B	0,51	1,28	0,17	2,57	No Class	s	m		Lio and Shao 2005 / Rai et al 2023	Micro Society	2005
 Subsaximicrobium wynnwilliamsii	B	0,3	0,4	0,25	2	No Class	s	m		Bowman et al. 2005	Micro Society	2005
 Subsaximicrobium saxinquilinus	B	0,3	0,4	0,1	2	No Class	s	m		Bowman et al. 2005	Micro Society	2005
 Subsaxibacter broadyi	B	0,3	0,4	0,1	1,25	No Class	s	m		Bowman et al. 2005	Micro Society	2005
@@ -364,16 +364,16 @@ Dunaliella viridis	E	0,8	2	0,15	3,42	No Class	s	m		Kushner 1967 / Johnsonet al. 
 Halobacterium volcanii	A	1,7	2,5	1	5	No Class	s	m		Mullakhanbhai et al. 1975	Micro Society	1975
 Nitrosococcus mobilis	B	0,171	0,171	0,017	0,685	No Class	s	m		Koops et al. 1976		1976
 Haloarcula vallismortis	A	4,281	4,281	1,712	4,281	No Class	s	m		Prüss et al. 1993 / Gonzalez et al. 1978		1978
-Bacillus globisporus marinus	B	0,51	0,59	0,26	1,2	No Class	s	m		Ruger and Richter 1979	Micro Society	1979
+Bacillus globisporus marinus	B	3	3,5	0	7	No Class	s	p	Sim	Ruger and Richter 1979	Micro Society	1979
 Vibrio parahaemolyticus	B					No Class	s	m		Palasumtheram 1981	Micro Society	1981
 Vibrio parahaemolyticus	B	0,5	0,5	0,1	1,2	No Class	s	m		Honda et al. 2008 / Joseph et al. 1982		1982
 Clostridium lortetii	B	1,4	1,5	1	2	No Class	s	m		Oren 1983		1983
 Vibrio alginolyticus	B	2,22	2,22	0	2,57	No Class	s	m		Emond et al. 1983	Micro Society	1983
-Rhodococcus marinonascens	B					No Class	s	m		Helmke and Weyland 1984	Micro Society	1984
+Rhodococcus marinonascens	B					Moderate	s	m		Helmke and Weyland 1984	Micro Society	1984
 Haloarcula hispanica	A	3,9	3,9	2,5	5,2	No Class	s	m		Juez et al. 1986		1986
 Halomethanococcus doii	A	3	3	1,8	3,425	No Class	s	m		Yu e Kawamura 1986		1986
 Hansenula anomola	E	1,369	1,369			No Class	s	m		Kagiyama et al. 1987		1987
-Methanohalophilus zhilinae	B	0,7	0,7	0,20	2,10	No Class	s	m		Mathrani et al. 1988		1988
+Methanohalophilus zhilinae	B	0,7	0,7	0,20	2,10	No Class	s	m		Mathrani et al. 1988	Micro Society	1988
 Polypaecilum pisce	E					No Class	s	m		Wheeler et al. 1988	Micro Society	1988
 Basipetospora halophila	E					No Class	s	m		Wheeler et al. 1988	Micro Society	1988
 Salimicrobium halophilum	B	2,568	2,568	0,514	5,137	No Class	s	m		Ventosa et al. 1989 / Ventosa et al. 1998 / Yoon et al 2007	Micro Society	1989
@@ -382,7 +382,7 @@ Haloarcula marismortui	A	3,7	3,7	1,7	5,1	No Class	s	m		Mylvaganam e Denis 1992 /
 Marinococcus hispanicus	B	1,71	1,71	0,08	4,23	No Class	s	m		Marquez et al. 1990	Micro Society	1990
 Halomonas meridiana	B					No Class	s	m		James et al. 1990	Micro Society	1990
 Volcaniella eurihalina	B	1,28	1,28	0,43	4,28	No Class	s	m		Quesada et al. 1990	Micro Society	1990
-Methanohalophilus halophilus	B			0,3	2,6	No Class	s	m		Wilham et al. 1991		1991
+Methanohalophilus halophilus	B			0,3	2,6	No Class	s	m		Wilham et al. 1991	Micro Society	1991
 Methanohalophilo halophilus	A	1,2	1,5	0,3	2,6	No Class	s	m		Wilharm et al. 1991		1991
 Methanohalobium evestigatum	A	4,3	4,3	2,6	5,1	No Class	s	m		Wilharm et al. 1991		1991
 Deleya salina	B	1,28		0,43	3,42	No Class	s	m		Valderrama et al. 1991	Micro Society	1991
@@ -397,7 +397,7 @@ Methanolobus taylorii	B			0,2	1,2	No Class	s	m		Oremland et al. 1994	Micro Socie
 Saccharomonospora halophila	B	1,71	2,57	0,86	3,42	No Class	s	m		Ruan et al.1994 / Tang et al 2011	Micro Society	1994
 Halocccus salifodinae	A	3,42	4,28	2,57		No Class	s	m		Denner et al. 1994	Micro Society	1994
 Photobacterium histaminium	B	0,34	0,34			No Class	s	m		Okuzumi et al. 1994	Micro Society	1994
-Haloincola saccharolytic	B	1,28	2,14	0,51	5,13	No Class	s	m		Cayol et al. 1994	Micro Society	1994
+Haloincola saccharolytica	B	1,28	2,14	0,51	5,13	No Class	s	m		Cayol et al. 1994	Micro Society	1994
 Halorubrum lacusprofundi	A	3,5	3,5	1		No Class	s	m		DasSarma et al. 2013 / McGenty e Grant 1995		1995
 Rhodovulum strictum	B	0,14		0,09	0,51	No Class	s	m		Hiraiashi e Ueda 1995	Micro Society	1995
 Haloanaerobium alcaliphilum	B	1,71	1,71	0,43	2,57	No Class	s	m		Tsai et al. 1995	Micro Society	1995
@@ -406,10 +406,10 @@ Halobacillus litoralis	B	1,712	1,712	0,086	4,281	No Class	s	m		Spring et al. 199
 Desulfovibrio gabonensis	B	0,86	1,03	0,17	2,91	No Class	s	m		Tardy-Jacquenod et al. 1996	Micro Society	1996
 Salibacillus salexigens	B	1,712	1,712	1,199	3,425	No Class	s	m		Garabito et al. 1997 / Ventosa et al. 1998		1997
 Thermonema rossianum	B	0,51	0,51	0	1,03	No Class	s	m		Tenreiro et al. 1997	Micro Society	1997
-Dethiosulfovibrio peptidovoran	B	0,51	0,51	0	1,88	No Class	s	m		Magot et al. 1997	Micro Society	1997
+Dethiosulfovibrio peptidovorans	B	0,51	0,51	0	1,88	No Class	s	m		Magot et al. 1997	Micro Society	1997
 Desulfovibrio profundus 	B	0,1	1,37	0,03	1,71	No Class	s	m		Bale et al. 1997	Micro Society	1997
 Tetragenococcus muriaticus	B	1,199	1,712	0,171	4,281	No Class	s	m		Kubayashi et al. 2003 / Ventosa et al. 1998		1998
-Halomonas enlongata	B	0,599	1,369	0,005	3,596	No Class	s	m		Margesin e Schinner 2001 / Ventosa et al. 1998		1998
+Halomonas enlongata	B	0,599	1,369	0,005	3,596	No Class	s	m	0,984	Margesin e Schinner 2001 / Ventosa et al. 1998		1998
 Halomonas subglaciescola	B			0,086	3,425	No Class	s	m		Ventosa et al. 1998		1998
 Cobetia marina	B	1,369	1,369	0,599	3,425	No Class	s	m		Ventosa et al. 1998 / Romanenko et al 2013	Micro Society	1998
 Halomonas halmophila	B			0,085	3,425	No Class	s	m		Ventosa et al. 1998		1998
@@ -451,13 +451,13 @@ Halorhodospira halophila 	B	2,568	5,993	0,599	5,993	No Class	s	m		Deole et al. 2
 Halorhodospira halochloris	B	2,568	4,281	0,599	5,993	No Class	s	m		Deole et al. 2013		2013
 Alkalispirochaeta americana	B	0,51	0,51	0,34	2,05	No Class	s	m		Shivani et al. 2015 / Sravanthi et al 2016	Micro Society	2015
 Halorubrum persicum	A	3,42	3,42	2,57	5,14	No Class	s	m		Corral et al. 2015	Micro Society	2015
-Haloterrigena thermotolerans	A	3	3,5	2	4,3	No Class	s	m		Montalvo-Rodríguez et al. 200		
+Haloterrigena thermotolerans	A	3	3,5	2	4,3	No Class	s	m		Montalvo-Rodríguez et al. 2000	Micro Society	2000
 Dentryphiella salina	E					No Class	s	m		ref 12		
 Aspergillus flavus	E					No Class	s	m				
 Penicillium roquefortii	E					No Class	s	m				
 Actinoployspora halophila	B					No Class	s	m				
 Halomonas pantelleriense	B	1,712	1,712	0,205	2,568	No Class	s	m		Ventosa et al. 1998		
-Chromohalobacter marismortui	B	1,712	1,712	0,171	5,137	No Class	s	m		Ventosa et al. 1998		
+Chromohalobacter marismortui	B	1,712	1,712	0,171	5,137	No Class	s	m		Ventosa et al. 1998 / Ventosa et al 1989	Micro Society	1989
 Salinivibrio costicola	B	1,712	1,712	0,086	2,055	No Class	s	m		Ventosa et al. 1998		
 Pseudomonas halophila	B	0,856	0,856	0,017	3,425	No Class	s	m		Ventosa et al. 1998		
 Psychroflexus gondwanense	B	0,856	0,856	0	0,856	No Class	s	m	Frio	Ventosa et al. 1998 / Bowman et al.1998		
@@ -539,7 +539,7 @@ Gracilibacillus halophilus	B	2,57	2,57	1,9	5,14	No Class	s	m		Chen et al. 2008
 Spirochaeta lutea	B	0,34	1,28	0,171	1,54	No Class	s	m		Shivani et al. 2015		
 Spirochaeta asiatica	B	0,51	1,03	0,34	1,37	No Class	s	m		Shivani et al. 2015		
 Spirochaeta alkalica	B	0,86	0,86	0,51	1,71	No Class	s	m		Shivani et al. 2015		
-Micrococcus halobius	B	1	2	1	5	No Class	s	m		Onish and Kamekura	Micro Society	
+Micrococcus halobius	B	1	2	1	5	Moderate	s	m	Sim	Onish and Kamekura	Micro Society	1972
 Debaryomyces hansenii	E					No Class	s	m		Turk et al. 2007		
 Zygosaccharomyces rouxii	E					No Class	s	m		Turk et al. 2007		
 Yarrowia lipolytica	E					No Class	s	m		Turk et al. 2007		
@@ -698,7 +698,7 @@ Salinisphaera dokdonensis	B	10	10	4	21	Moderate	s	p		Gi et al 2010	Micro Society
 Terribacillus aidingensis	B	3	7	0,5	21	Moderate	s	p		Liu et al 2010	Micro Society	2010
 Virgibacillus subterraneus	B	9	9	0	25	Moderate	s	p		Wang et al 2010	Micro Society	2010
 Pontibacillus yanchengensis	B	6	8	3	20	Moderate	s	p		Huang et al. 2015 / Yang et al 2011	Micro Society	2011
-Alcanivorax pacificus	B	3	5	0,5	12	Moderate	s	p		Lai et al 2011	Micro Society	2011
+Isoalcanivorax pacificus	B	3	5	0,5	12	Moderate	s	p		Lai et al 2011 / Rai et al 2023	Micro Society	2011
 Bacillus alkalisediminis	B	5	5	2	10	Moderate	s	p	Alkali	Borsodi et al 2011	Micro Society	2011
 Bacillus hemicentroti	B	5	8	0,5	25	Moderate	s	p	Alkali	Chen et al 2011	Micro Society	2011
 Cellulomonas phragmiteti	B	5	5	2	7	Moderate	s	p	Alkali	Rusznyák et al 2011	Micro Society	2011
@@ -875,7 +875,7 @@ Virgibacillus sediminis	B	5	10	1	20	Moderate	Sais totais	p	Alkali	Chen et al. 20
 Halomonas nitroreducens	B	5	7,5	3	20	Moderate	s	p		González-Domenech	Micro Society	
 Saccharomonospora halophila	B	10	10	10	30	No Class	s	p		Al-Zahrban et al. 2002	Micro Society	2002
 Aurantimonas coralicida	B			2	3	No Class	Sais totais	p		Denner et al. 2003	Micro Society	2003
-Alcanivorax venustensis	B			0	15	No Class	s	p		Fernandéz-Martinéz et al. 2003	Micro Society	2003
+Alloalcanivorax venustensis	B			0	15	No Class	s	p		Fernandéz-Martinéz et al. 2003 / Rai et al 2023	Micro Society	2003
 Thalassomonas ganghwensis	B	2	4	1	8	No Class	Sais totais	p		Yi et al. 2004	Micro Society	2004
 Aestuariibacter salexigens	B	2	6			No Class	Sais totais	p		Yi et al. 2004	Micro Society	2004
 Aestuariibacter halophilus	B	2	3			No Class	Sais totais	p		Yi et al. 2004	Micro Society	2004
@@ -951,7 +951,7 @@ Rhizobium halophytocola	B	2,5	5,5	0	7,5	No Class	s	p		Bibi et al 2012	Micro Soci
 Salisediminibacterium halotolerans	B	9	9	3	30	No Class	s	p	Alkali	Jiang et al 2012	Micro Society	2012
 Actinopolyspora mzabensis	B	10	28	7	32	No Class	s	p		Meklat et al. 2013	Micro Society	2013
 Corallomonas stylophorae	B	3	4	0,5	7	No Class	s	p		Chen et al. 2013	Micro Society	2013
-Alcanivorax marinus	B	3	3	0,5	15	No Class	s	p	Oil	Lai et al 2013	Micro Society	2013
+Alloalcanivorax marinus	B	3	3	0,5	15	No Class	s	p	Oil	Lai et al 2013 / Rai et al 2023	Micro Society	2013
 Halobellus inordinatus	A	180	180	100	280	No Class	s	g		Qiu et al 2013	Micro Society	2013
 Natronoarchaeum philippinense	A	18	18	14	30	No Class	s	p		Shimane et al 2013	Micro Society	2013
 Natronococcus roseus	A	25	25	15	30	No Class	s	p	Alkali	Corral et al 2013	Micro Society	2013
@@ -1196,7 +1196,7 @@ Halomonas diversa	B	2	8	0	19	Moderate	s	p		Wang et al 2021	Micro Society	2021
 Halomonas icarae	B	2	8	0	24	Moderate	s	p		Pandiyan et al 2021	Micro Society	2021
 Halosimplex halophilum	A	4,3	4,3	1,4	5,1	No Class	s	m		Yang et al 2021	Micro Society	2021
 Halosimplex salinum	A	3,1	3,1	2,1	4,8	No Class	s	m		Yang et al 2021	Micro Society	2021
-Hoyosella lacisalsi	B	0	4	0	10	Tolerant	s	p		Yang et al 2021	Micro Society	2021
+Lolliginicoccus lacisalsi	B	0	4	0	10	Tolerant	s	p		Yang et al 2021 / Miyanishi et al 2023	Micro Society	2021
 Kaustia mangrovi	B	3	5	2	14	Moderate	s	p		Sefrji et al 2021	Micro Society	2021
 Kushneria phosphatilytica	B	6	6	0,5	20	No Class	s	p		Du et al 2021	Micro Society	2021
 Lunatibacter salilacus	B	2	2	0	7	Slight	s	p		Han et al 2021	Micro Society	2021
@@ -1248,3 +1248,49 @@ Sagittula salina	B			1	5	Slight	s	p	Psychro	Satari et al 2022	Micro Society	2022
 Sediminibacillus dalangtanensis	B	7,2	7,2	0	21,6	Moderate	s	p		Huang et al 2022	Micro Society	2022
 Sinomicrobium weinanense	B	0	3	0	12	No Class	s	p		Wu et al 2022	Micro Society	2022
 Thiomicrorhabdus heinhorstiae	B	0,41	0,41	0,08	0,689	Moderate	s	m		Updegraff et al 2022	Micro Society	2022
+Planococcus halophilus	B			0	5,5	No Class	s	m	Sim	Novitsky and Kushner 1976	Micro Society	1976
+Halomonas elongata	B	3,5	8	0	32	No Class	Solar salts	p	Sim	Vreeland et al 1980	Micro Society	1980
+Deleya halophila	B	7,5	7,5	2	30	Moderate	Marine salts	p	Sim	Quesade et al 1984	Micro Society	1984
+Alcanivorax xiamenensis	B	3	5	0,5	15	No Class	s	p		Lai et al 2023	Micro Society	2023
+Arcobacter roscoffensis	B	3	3	2	7	No Class	s	p		Pascual et al 2023	Micro Society	2023
+Brevibacillus humidisoli	B	0	0	0	6	Tolerant	s	p		Lee et al 2023	Micro Society	2023
+Haloarcula terrestris	A	25	25	15	30	Extreme	s	p		Stralová et al 2023	Micro Society	2023
+Salinimicrobium tongyeongense	B	3	3	0,5	7	Moderate	s	p		Ganbat et al 2023	Micro Society	2023
+Georgenia halotolerans	B	0	3	0	15	Tolerant	s	p		Liu et al 2023	Micro Society	2023
+Gillisia lutea	B	2	7	0	10	No Class	s	p		Vidal-Verdú et al 2023	Micro Society	2023
+Gracilibacillus salinarum	B	5	10	0	15	Tolerant	s	p		Subramanian et al 2023	Micro Society	2023
+Gracilibacillus caseinilyticus	B	5	10	0	20	Tolerant	s	p		Subramanian et al 2023	Micro Society	2023
+Gracilimonas sediminicola	B	2	2	0	10	Tolerant	s	p		Lee et al 2023	Micro Society	2023
+Gramella oceanisediminis	B	0	2	0	9	Moderate	s	p		Yang et al 2023	Micro Society	2023
+Halobacterium wangiae	A	3,1	3,1	1,4	4,8	Extreme	s	m		Wang et al 2023	Micro Society	2023
+Halobacterium zhouii	A	3,4	3,4	1,7	4,3	Extreme	s	m		Wang et al 2023	Micro Society	2023
+Halomicroarcula laminariae	A	2,6	2,6	1,4	44,8	Extreme	s	m		Ma et al 2023	Micro Society	2023
+Halomicroarcula marina	A	3,4	3,4	2,6	4,8	Extreme	s	m		Ma et al 2023	Micro Society	2023
+Halomonas dongshanensis	B	1	5	0,5	18	Moderate	s	p		Lin et al 2023	Micro Society	2023
+Lactiplantibacillus brownii	B	0	1	0	6	Slight	s	p		Heng et al 2023	Micro Society	2023
+Lentibacillus daqui	B	8	10	0	20	Moderate	s	p		Liang et al 2023	Micro Society	2023
+Marinitoga aeolica	B	25	25	10	50	Slight	s	g		Postec et al 2023	Micro Society	2023
+Marinobacter iranensis	B	3	3	0,5	15	Slight	s	p		Rafieyan et al 2023	Micro Society	2023
+Marinobacter panjinensis	B	0,2	8	0,2	15	Moderate	s	p		Yang et al 2023	Micro Society	2023
+Maritalea mediterranea	B	0,5	9	0	12,5	No Class	s	p		Vidal-Verdú et al 2023	Micro Society	2023
+Marivirga aurantiaca	B	7,5	9	2	15	No Class	s	p		Zhang et al 2023	Micro Society	2023
+Microbulbifer zhoushanensis	B	3	3	1	15	Tolerant	s	p		Fu et al 2023	Micro Society	2023
+Microbulbifer sediminum	B	4	4	1	15	Tolerant	s	p		Fu et al 2023	Micro Society	2023
+Microbulbifer guangxiensis	B	1	1	1	10	Tolerant	s	p		Fu et al 2023	Micro Society	2023
+Natrinema salsiterrestre	A	20	25	12	30	Extreme	Total salts	p		Straková et al 2023	Micro Society	2023
+Natronosalvus halobius	A	3,9	3,9	0,9	4,8	No Class	s	m		Tan et al 2023	Micro Society	2023
+Natronosalvus caseinilyticus	A	3,9	3,9	1,4	5,1	No Class	s	m		Tan et al 2023	Micro Society	2023
+Natronosalvus vescus	A	4,3	4,3	0,9	4,8	No Class	s	m		Tan et al 2023	Micro Society	2023
+Natronosalvus rutilus	A	3,1	3,1	0,9	4,8	No Class	s	m		Tan et al 2023	Micro Society	2023
+Natronosalvus amylolyticus	A	3,4	3,4	0,9	4,8	No Class	s	m		Tan et al 2023	Micro Society	2023
+Nocardiopsis suaedae	B	5	12	0	22	No Class	s	p		Chantavorakit et al 2023	Micro Society	2023
+Nocardiopsis endophytica	B	5	10	0	17	No Class	s	p		Chantavorakit et al 2023	Micro Society	2023
+Pacificoceanicola onchidii	B	2,5	3,5	0,5	6,5	Slight	s	p		Yang et al 2023	Micro Society	2023
+Parathalassolituus penaei	B	2	2	0	4	No Class	s	p		Chen et al 2023	Micro Society	2023
+Profundirhabdus halotolerans	B	4	4	0	13	No Class	s	p		Liu et al 2023	Micro Society	2023
+Radiobacillus kanasensis	B	0	12	0	14	Tolerant	s	p		Zhang et la 2023	Micro Society	2023
+Salinigranum marinum	A	3,4	3,4	1,4	5,1	No Class	s	m		Cheng et al 2023	Micro Society	2023
+Halohasta salina	A	3,1	3,1	1,4	4,8	No Class	s	m		Cheng et al 2023	Micro Society	2023
+Salinimicrobium profundisediminis	B	2	3	0	10	No Class	s	p		An et al 2023	Micro Society	2023
+Salipaludibacillus daqingensis	B	8	8	1	12	Moderate	s	p		Guo et al 2023	Micro Society	2023
+Vibrio eleionomae	B			1	10	No Class	s	p		Enciso-Ibarra et al 2023	Micro Society	2023

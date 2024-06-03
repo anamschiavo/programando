@@ -99,4 +99,6 @@ graf_sob<- ggplot(tabgraf, aes(x=conc, y=sob)) +
                    minor_breaks=log10_minor_break())
 graf_sob
 
+write.table(tabgraf, file='sob.tsv', sep='\t', row.names=FALSE, dec=',')
+
 ggsave('escolhidos_NaCl.png', graf_sob, device='png', unit='cm', width = 18, height = 26, dpi=300)   # Salva gráfico que acabamos de criar como um arquivo
