@@ -736,7 +736,7 @@ Salinisphaera orenii	B	15	17	3	25	Moderate	s	p		Park et al 2012	Micro Society	20
 Saliterribacillus persicus	B	7,5	7,5	0,5	22,5	Moderate	s	p		Amoozegar et al 2013	Micro Society	2013
 Aliifodinibius roseus	B	6	10	4	20	Moderate	s	p		Wang et al 2013	Micro Society	2013
 Aliifodinibius sediminis	B	6	10	4	16	Moderate	s	p		Wang et al 2013	Micro Society	2013
-Bacillus halosaccharovorans	B	5	15	105	25	Moderate	s	p		Mehrshad et al 2013	Micro Society	2013
+Bacillus halosaccharovorans	B	5	15	0,5	25	Moderate	s	p		Mehrshad et al 2013	Micro Society	2013
 Celerinatantimonas yamalensis 	B	6	8	2	12	Moderate	s	p	Cold	Shcherbakova et al 2013	Micro Society	2013
 Defluviimonas aestuarii	B	1	1,5	0	10	Moderate	s	p		Math et al 2013	Micro Society	2013
 Fabibacter pacificus	B	2	2	0,5	10	Moderate	s	p		Huo et al 2013	Micro Society	2013
@@ -1264,7 +1264,7 @@ Gracilimonas sediminicola	B	2	2	0	10	Tolerant	s	p		Lee et al 2023	Micro Society	
 Gramella oceanisediminis	B	0	2	0	9	Moderate	s	p		Yang et al 2023	Micro Society	2023
 Halobacterium wangiae	A	3,1	3,1	1,4	4,8	Extreme	s	m		Wang et al 2023	Micro Society	2023
 Halobacterium zhouii	A	3,4	3,4	1,7	4,3	Extreme	s	m		Wang et al 2023	Micro Society	2023
-Halomicroarcula laminariae	A	2,6	2,6	1,4	44,8	Extreme	s	m		Ma et al 2023	Micro Society	2023
+Halomicroarcula laminariae	A	2,6	2,6	1,4	4,8	Extreme	s	m		Ma et al 2023	Micro Society	2023
 Halomicroarcula marina	A	3,4	3,4	2,6	4,8	Extreme	s	m		Ma et al 2023	Micro Society	2023
 Halomonas dongshanensis	B	1	5	0,5	18	Moderate	s	p		Lin et al 2023	Micro Society	2023
 Lactiplantibacillus brownii	B	0	1	0	6	Slight	s	p		Heng et al 2023	Micro Society	2023

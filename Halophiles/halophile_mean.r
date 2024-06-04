@@ -7,6 +7,8 @@
 #**********PACOTES E BIBLIOTECAS*********
 install.packages("ggplot2") #Linha necessária apenas se não tiver pacote instalado
 library(ggplot2)
+install.packages("gridExtra")
+library(gridExtra)
 
 #lê as duas tabelas, coloca em objetos no R
 sup <- read.table("halo_sup.tsv", sep="", dec=".", header=TRUE, na.strings="NA") #lê tabela de concentração suportada
@@ -32,59 +34,49 @@ for (n in seq_along(halo_sup[,4])){    #pega cada bicho
     }
 
 mean_sup <- as.numeric(mean_sup)
-tab_sup <- cbind.data.frame(dom_sup, mean_sup,class_sup) #junta vetores como colunas de uma data frame 1-Domínio, 2-Média valores suportados, 3-classificação
+tab_sup <- cbind.data.frame(dom_sup, mean_sup, class_sup) #junta vetores como colunas de uma data frame 1-Domínio, 2-Média valores suportados, 3-classificação
 tab_sup$dom_sup <- as.factor(tab_sup$dom_sup)   #Transforma coluna de domínios em fator. Fica mais fácil de lidar nos gráficos e tabelas depois
 tab_sup$class_sup <- as.factor(tab_sup$class_sup)  #Transforma classificação do autor em fator
 
-caixa_sup <-ggplot(tab_sup, aes(x=dom_sup, y=mean_sup)) +  # box plot da concentração suportada média dividido por domínio
-  geom_boxplot()+
-  labs(x="Domínio", y="[NaCl] (mol/L)")+
-  ggtitle("NaCl Survival Range")+
-  theme_bw()
 
-
-
-
-hist_sup_domain <- ggplot(tab_sup, aes(x=mean_sup, fill=dom_sup, stat(density))) +
-    geom_histogram(binwidth=0.1, alpha=0.4, position="identity")+
+hist_sup_domain <- ggplot(tab_sup, aes(x=mean_sup, fill=dom_sup)) +
+    geom_histogram(binwidth=0.1, alpha=0.6, position="identity")+
     labs(x=expression(paste("[NaCl] mol.L"^-{1})),
-    y="Frequência", fill="Domínio",
-    title="Faixa de sobreviência de micro-organismos halófilos",
-    subtitle="Por Domínio")+
+    y="", fill="")+
+    theme_bw()+
+    scale_x_continuous(breaks = c(0,1,2,3,4,5))+
+    theme(
+    plot.title = element_text(family="", face="bold", size=16, hjust=.5), #hjust coloca título para o centro
+    plot.subtitle = element_text(face="bold", size=12, hjust=0.5, colour="dark gray"),
+    legend.text = element_text(size = 12),
+    axis.text = element_text(colour = "black", size=12),
+    axis.title = element_text(size=12),
+    axis.title.x = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)))+
+    scale_color_manual(values=c("#6B2639", "#70846B"))+
+    scale_fill_manual(values=c("#6B2639", "#70846B"), labels=c("Archaea", "Bacteria"))
+
+hist_sup_domain
+ggsave('hist_sup_domain_mean.png', hist_sup_domain, device='png', unit='cm', width = 12, height = 6.5, dpi=300)
+
+
+
+
+hist_sup_mean <- ggplot(tab_sup) +
+    geom_histogram(aes(x=mean_sup), binwidth=0.1, fill="#112225")+  #quanto maior alpha, mais opacas as cores
+    labs(x=expression(paste("[NaCl] mol.L"^-{1})), y="Número de espécies")+
+    coord_cartesian(xlim = c(0,5))+
+    scale_x_continuous(breaks = c(0,1,2,3,4,5))+
     theme_bw()+
     theme(
     plot.title = element_text(family="", face="bold", size=16, hjust=.5), #hjust coloca título para o centro
     plot.subtitle = element_text(face="bold", size=12, hjust=0.5, colour="dark gray"),
     legend.text = element_text(size = 12),
     axis.text = element_text(colour = "black", size=12),
-    axis.title = element_text(size=12))+
-    scale_color_manual(values=c("#719154", "#963B36", "#278577"))+
-    scale_fill_manual(values=c("#719154", "#963B36", "#278577"), labels=c("Archaea", "Bacteria", "Eukarya"))
-
-	ggsave('hist_sup_domain_mean.png')
-
-
-
-
-hist_sup <- ggplot(tab_sup, aes(x=mean_sup, stat(density))) +
-    #geom_vline(xintercept=0.2, color="darkgray", size=1, linetype="dashed")+
-    #geom_vline(xintercept=0.85, color="darkgray", size=1, linetype="dashed")+
-    #geom_vline(xintercept=3.4, color="darkgray", size=1, linetype="dashed")+
-    #geom_vline(xintercept=5.1, color="darkgray", size=1, linetype="dashed")+
-    geom_histogram(binwidth=0.1, color="#e6d994ff", fill="#e6d994ff", position="identity")+  #quanto maior alpha, mais opacas as cores
-    labs(x=expression(paste("[NaCl] mol.L"^-{1})), y="Frequência", title="Concentração suportada NaCl por halófilos", subtitle="Método média")+
-    geom_density(alpha=.45, fill="#e6d994ff", color="#5e5e5eff")+
-    coord_cartesian(xlim = c(0,6.5), ylim=c(0, 1))+
-    scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7))+ 
-    theme_bw()+
-    theme(plot.title=element_text(family="", face="bold", size=16, hjust=.5),
-    plot.subtitle = element_text(face="bold", size=12, hjust=0.5, colour="#5e5e5eff"),
-    legend.text = element_text(size = 12),
-    legend.title = element_text(face = "bold", size=12),
-    axis.text=element_text(size=10),
-    axis.title=element_text(size=12))
-
-	ggsave('hist_sup_mean.png')
+    axis.title = element_text(size=12),
+    axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)))
+hist_sup_mean
+ggsave('hist_sup_mean.png', hist_sup_mean,  device='png', unit='cm', width = 12, height = 6.5, dpi=300)
 
 
 
@@ -109,61 +101,48 @@ tab_opt$dom_opt <- as.factor(tab_opt$dom_opt)   #Transforma coluna de domínios 
 tab_opt$class_opt <- as.factor(tab_opt$class_opt)  #Transforma classificação do autor em fator
 
 
-
-caixa_opt_domain <-ggplot(tab_opt, aes(x=dom_opt, y=mean_opt))+ #boxplot das concentrações ótimas separada por domínio
-  geom_boxplot()+
-  labs(x="Domain", y="[NaCl] (mol/L)")+
-  ggtitle("NaCl Concentration Optimal Growth")+
-  theme_bw()
-
-
-
-hist_opt_domain <- ggplot(tab_opt, aes(x=mean_opt, fill=dom_opt, stat(density))) + # Histograma concentração ótima separado por domínio da vida
- # geom_vline(xintercept=0.2, color="darkgray", size=1, linetype="dashed")+
- # geom_vline(xintercept=0.85, color="darkgray", size=1, linetype="dashed")+
- # geom_vline(xintercept=3.4, color="darkgray", size=1, linetype="dashed")+
- # geom_vline(xintercept=5.1, color="darkgray", size=1, linetype="dashed")+
- geom_histogram(binwidth=0.1, alpha=0.65, position="identity")+  #quanto maior alpha, mais opacas as cores
- labs(x=expression(paste("[NaCl] mol.L"^-{1})), y="Frequência", fill="Domínio", title="Concentração ótima de crescimento", subtitle="Por Domínio")+
- theme_bw()+
- theme(   plot.title = element_text(family="", face="bold", size=16, hjust=.5), #hjust coloca título para o centro
+hist_opt_domain <- ggplot(tab_opt, aes(x=mean_opt, fill=dom_opt)) +
+    geom_histogram(binwidth=0.1, alpha=0.6, position="identity")+
+    labs(x=expression(paste("[NaCl] mol.L"^-{1})),
+    y="", fill="")+
+    scale_x_continuous(breaks = c(0,1,2,3,4,5))+
+    theme_bw()+
+    theme(
+    plot.title = element_text(family="", face="bold", size=16, hjust=.5), #hjust coloca título para o centro
     plot.subtitle = element_text(face="bold", size=12, hjust=0.5, colour="dark gray"),
     legend.text = element_text(size = 12),
     axis.text = element_text(colour = "black", size=12),
-    axis.title = element_text(size=12))+
-    scale_color_manual(values=c("#719154", "#963B36", "#278577"))+
-    scale_fill_manual(values=c("#719154", "#963B36", "#278577"), labels=c("Archaea", "Bacteria", "Eukarya"))
+    axis.title = element_text(size=12),
+    axis.title.x = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)))+
+    scale_fill_manual(values=c("#973E3A", "#EC9C61"), labels=c("Archaea", "Bacteria"))
 
-	ggsave('hist_opt_domain_mean.png')
- 
- 
-
- 
-hist_opt <- ggplot(tab_opt, aes(x=mean_opt, stat(density))) +
-    # geom_vline(xintercept=0.2, color="darkgray", size=1, linetype="dashed")+
-    # geom_vline(xintercept=0.85, color="darkgray", size=1, linetype="dashed")+  
-    # geom_vline(xintercept=3.4, color="darkgray", size=1, linetype="dashed")+
-    # geom_vline(xintercept=5.1, color="darkgray", size=1, linetype="dashed")+
-    geom_histogram(binwidth=0.1, color="#e6d994ff", fill="#e6d994ff", position="identity")+  #quanto maior alpha, mais opacas as cores
-    labs(x=expression(paste("[NaCl] mol.L"^-{1})), y="Frequência", title="Concentração ótima NaCl de halófilos", subtitle="Método média")+
-    geom_density(alpha=.45, fill="#e6d994ff", color="#5e5e5eff")+
-    coord_cartesian(xlim = c(0,6.5), ylim=c(0, 1))+
-    scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7))+ 
-    theme_bw()+
-    theme(plot.title=element_text(family="", face="bold", size=16, hjust=.5),
-    plot.subtitle = element_text(face="bold", size=12, hjust=0.5, colour="#5e5e5eff"),
-    legend.text = element_text(size = 12),
-    legend.title = element_text(face = "bold", size=12),
-    axis.text=element_text(size=10),
-    axis.title=element_text(size=12))
- 
-	ggsave('hist_opt_mean.png')
+hist_opt_domain
+	ggsave('hist_opt_domain_mean.png', hist_opt_domain, device='png', unit='cm', width = 12, height = 6.5, dpi=300)
 
 
- 
+
+
+hist_opt_mean <- ggplot(tab_opt) +
+      geom_histogram(aes(x=mean_opt), binwidth=0.1, fill="#3C1933")+  #quanto maior alpha, mais opacas as cores
+      labs(x=expression(paste("[NaCl] mol.L"^-{1})), y="Número de espécies")+
+      coord_cartesian(xlim = c(0,5))+
+      scale_x_continuous(breaks = c(0,1,2,3,4,5))+
+      theme_bw()+
+      theme(
+      plot.title = element_text(family="", face="bold", size=16, hjust=.5), #hjust coloca título para o centro
+      plot.subtitle = element_text(face="bold", size=12, hjust=0.5, colour="dark gray"),
+      legend.text = element_text(size = 12),
+      axis.text = element_text(colour = "black", size=12),
+      axis.title = element_text(size=12),
+      axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)),
+      axis.title.x = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)))
+  hist_opt_mean
+  ggsave('hist_opt_mean.png', hist_opt_mean,  device='png', unit='cm', width = 12, height = 6.5, dpi=300)
+
+
 
 #********** TOTAL = OPT+SUP **********
- 
+
 mean_total <- c(mean_sup, mean_opt)
 dom_total <- c(dom_sup, dom_opt)
 class_total <- c(class_sup, class_opt)
@@ -176,43 +155,24 @@ inter <- c(s, o) #O vetor inter diz se aquela linha corresponde a um ponto do su
 tab_total <- cbind.data.frame(dom_total, mean_total, inter, class_total) #tabela que junta as informações de Domínio, Concentração, ótimo/suportado
 
 
-
-
 hist_total <- ggplot(tab_total, aes(x=mean_total, fill=inter)) +
- geom_histogram(binwidth=0.1, alpha=.45, position="identity")+
- labs(x=expression(paste("[NaCl] moles.L"^-{1})), y="Count", fill="")+
- ggtitle("NaCl Concentration Optimal Growth Range")+
- theme_bw()+
- theme(plot.title=element_text(family="", face="bold", size=16), legend.text = element_text(size = 12),
-legend.title = element_text(face = "bold", size=12), axis.text=element_text(size=10), axis.title=element_text(size=12))+
- scale_color_manual(values=c('#00332b', '#278577'))+
- scale_fill_manual(values=c('#00332b', '#278577'))
- 
-	ggsave('hist_total_mean.png')
-
-
-
-
-caixa_optsup <- ggplot(tab_total, aes(x=dom_total, y= mean_total, fill=inter))+ 
-    geom_boxplot(outlier.size=0.3, alpha=1)+
-    labs(x="Domínio", y=expression(paste("[NaCl] mol.L"^-{1})), fill="", title="Crescimento de micro-organismos halófilos", subtitle="Por Domínio")+
+    geom_histogram(binwidth=0.1, alpha=.55, position="identity")+
+    labs(x=expression(paste("[NaCl] mol.L"^-{1})), y="Número de espécies", fill="")+
     theme_bw()+
-    scale_fill_manual(values=c("#278577", "#719154"), labels=c("Ótimo", "Suportado"))+
+    scale_x_continuous(breaks = c(0,1,2,3,4,5))+
     theme(
-    plot.title = element_text(face="bold", size=16, hjust=.5), #hjust coloca título para o centro
+    plot.title = element_text(family="", face="bold", size=16, hjust=.5), #hjust coloca título para o centro
     plot.subtitle = element_text(face="bold", size=12, hjust=0.5, colour="dark gray"),
     legend.text = element_text(size = 12),
     axis.text = element_text(colour = "black", size=12),
-    axis.title = element_text(size=12))
+    axis.title = element_text(size=12),
+    axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)))+
+    scale_fill_manual(values=c('#3C1933', '#112225'), labels=c("Ótimo", "Suportado"))
+hist_total
+ggsave('hist_total_mean.png', hist_total,  device='png', unit='cm', width = 12, height = 6.5, dpi=300)
 
-	ggsave('caixa_optsup_mean.png')
-  
-# hist_total_optsup <- ggplot(tab_total, aes(x=graf_total, color=inter, stat(density))) +    # histograma das concentrações todas separado por classificação
-    # geom_histogram(fill="white", position="dodge", binwidth=0.2)+
-    # theme_bw()  #dodge serve pra colocar os histogramas um do lado do outro (em vez de um em cima do outro)
-    
-    
-# hist_total_optsup <- ggplot(tab_total, aes(x=graf_total, color=inter, stat(density))) +    # histograma das concentrações todas separado por classificação
-    # geom_histogram(fill="white", position="identity", alpha=0.3, binwidth=0.2)+
-    # theme_bw()  # alpha: quanto maior valor, mais opaco
-    
+#********** GRID **********
+grid_mean <- grid.arrange(hist_sup_mean, hist_sup_domain,hist_opt_mean, hist_opt_domain,hist_total,
+                      layout_matrix=matrix(c(1,1,1,2,2,2,2,3,3,3,4,4,4,4,NA,5,5,5,5,5,NA), byrow=TRUE, ncol=7))
+
+ggsave('grid_mean.png', grid_mean,  device='png', unit='cm', width = 18, height = 27, dpi=300)
