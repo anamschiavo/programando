@@ -20,8 +20,6 @@ install.packages('MASS')
 library(MASS)
 install.packages('scales')
 library(scales)
-#install.packages('growthrates')
-#library(growthrates)
 install.packages("tidyverse")
 library(tidyverse)
 install.packages("ggtext")
@@ -61,6 +59,7 @@ calc_pseudo_R2 <- function(data, teor){   #data é vetor com os dados experiment
   pseudo_R2 <- 1-(ss_res/ss_tot)
   return(pseudo_R2)
 }
+
 
 # ********** LEITURA E PRÉ-PROCESSAMENTO **********
 tab <- read.table('crescimento.tsv', sep='\t', dec=',', header=TRUE, fill=TRUE)
@@ -122,14 +121,19 @@ y_fit <- baranyi(coef, d)
 tabgraf_fit <- cbind.data.frame(d, y, y_fit, erro_log)
 
 graf_fit <- ggplot(tabgraf_fit, aes(x=d))+
-  geom_point(aes(y=y))+
-  geom_line(aes(y=y_fit), linewidth=.5)+
+  geom_line(aes(y=y_fit), linewidth=.7, color='gray55')+
+  geom_point(aes(y=y), size=.93)+
   geom_errorbar(aes(ymin=y-erro_log, ymax=y+erro_log), width=.3)+
   theme_bw()+
-  ggtitle('Baranyi - S. boulardii')+
+  scale_x_continuous(breaks = seq(0, 30, 3))+
   labs(
     x='Time (hours)',
-    y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
+    y='ln(UFC.mL<sup>-1</sup>)')+
+    theme(axis.title = element_markdown(size=12),
+          axis.text = element_text(size=10),
+          panel.grid.major = element_line(size=.25),
+          panel.grid.minor = element_line(size=.1))
 graf_fit
+ggsave(plot=graf_fit, 'boulardii_growthcurve_artigo.tiff', , dpi=600, unit='cm', width=15, height=15)
+
 summary(fit)
-ggsave('graf_fit.png', graf_fit)

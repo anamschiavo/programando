@@ -23,7 +23,10 @@ install.packages("tidyverse")
 library(tidyverse)
 install.packages("ggtext")
 library(ggtext)
-
+install.packages('lamW')
+library(lamW)
+install.packages('gridExtra')
+library(gridExtra)
 
 #********** LEITURA **********
 tab <- read.table('jaja.tsv', sep="\t", dec=",", header=TRUE, fill=TRUE)
@@ -268,6 +271,27 @@ junto <- ggplot(tabgraf, aes(x=dose, y=sob, color=ferro))+
 junto
 ggsave(plot=junto, 'S_boulardii_junto_jaja.png')
 
+junto_bw <- ggplot(tabgraf, aes(x=dose, y=sob, color=ferro, shape=ferro))+
+    geom_point(size=2)+
+    geom_line(linewidth=.7)+
+    geom_errorbar(aes(ymin=sob-erro_sob, ymax=sob+erro_sob, xmin=dose-erro_dose, xmax=dose+erro_dose), width=.15, size=.5)+
+    theme_bw()+
+    labs(x=bquote("Fluence"~(J.m^-2)),
+         y='Viability (N/N<sub>0</sub>)')+
+    scale_color_grey(start=0, end=.75, name='[Fe<sup>3+</sup>] (mmol.L<sup>-1</sup>)')+
+    scale_shape_manual(values=c(15, 11, 17, 4, 16), name='[Fe<sup>3+</sup>] (mmol.L<sup>-1</sup>)')+
+    theme(
+      panel.grid.major = element_line(size=.5),
+      panel.grid.minor = element_line(size=.2),
+      legend.title = element_markdown(),
+      axis.title.y=element_markdown())+
+    scale_y_log10(limits = c(1e-5,2),
+                  labels = trans_format("log10", math_format(10^.x)),
+                  breaks=trans_breaks("log10", function(x) 10^x, n=5),
+                  minor_breaks=log10_minor_break())
+junto_bw
+ggsave(plot=junto_bw, 'S_boulardii_junto_artigo.tiff', device='tiff', dpi=600, unit='cm', width=20, height=12)
+
 junto_semlog <- ggplot(tabgraf, aes(x=dose, y=sob, color=ferro))+
     geom_point(size=1.5)+
     geom_line(linewidth=.7)+
@@ -316,21 +340,22 @@ summary(fit0_ld50)
 
 tabgraf0 <- cbind.data.frame(x0, m_sob0, e_sob0)
 graf_fit0 <- ggplot(tabgraf0, aes(x=x0, y=m_sob0))+
-    geom_point()+
-#    geom_errorbar(aes(ymin=m_sob0-e_sob0, ymax=m_sob0+e_sob0))+
     geom_smooth(method='nls',
                 data = tabgraf0,
                 formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
                 se = FALSE,
-                method.args = list(start = list(LD10 = 200, n = 2, f=.001)))+
+                method.args = list(start = list(LD10 = 200, n = 2, f=.001)),
+                color='grey')+
+    geom_point()+
+    geom_errorbar(aes(ymin=m_sob0-e_sob0, ymax=m_sob0+e_sob0), size=.5)+
     ggtitle('0 mM')+
     theme_bw()+
-    xlab("Fluência (J/m<sup>2</sup>)")+
-    ylab('Sobrevivência (N/N<sub>0</sub>)')+
-    theme(axis.title.x = element_markdown(),
-        axis.title.y = element_markdown())
+    xlab("Fluence (J/m<sup>2</sup>)")+
+    ylab('Viability (N/N<sub>0</sub>)')+
+    theme(axis.title = element_markdown(size=12),
+          axis.text = element_text(size=10))
 graf_fit0
-ggsave(plot=graf_fit0, 'fit0_jaja.png')
+ggsave(plot=graf_fit0, 'fit0_artigo.tiff', dpi=600, unit='cm', width=15, height=15)
 
 # Concentração 5mM
 tab5 <- filter(tabgraf, ferro=='5')
@@ -345,19 +370,22 @@ summary(fit5_ld50)
 
 tabgraf5 <- cbind.data.frame(x5, m_sob5)
 graf_fit5 <- ggplot(tabgraf5, aes(x=x5, y=m_sob5))+
-    geom_point()+
     geom_smooth(method='nls',
                 data = tabgraf5,
                 formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
                 se = FALSE,
-                method.args = list(start = list(LD10 = 200, n = 2)))+
+                method.args = list(start = list(LD10 = 200, n = 2)),
+                color='grey')+
+    geom_point()+
+    geom_errorbar(aes(ymin=m_sob5-e_sob5, ymax=m_sob5+e_sob5), width=100)+
     ggtitle('5 mM')+
     theme_bw()+
-    xlab("Fluência (J/m<sup>2</sup>)")+
-    ylab('Sobrevivência (N/N<sub>0</sub>)')+
-    theme(axis.title.x = element_markdown(),
-        axis.title.y = element_markdown())
-ggsave(plot=graf_fit5, 'fit5.png')
+    xlab("Fluence (J/m<sup>2</sup>)")+
+    ylab('Viability (N/N<sub>0</sub>)')+
+    theme(axis.title = element_markdown(size=12),
+        axis.text = element_text(size=10))
+graf_fit5
+ggsave(plot=graf_fit5, 'fit5_artigo.tiff', dpi=600, unit='cm', width=15, height=15)
 
 # Concentração 10mM
 tab10 <- filter(tabgraf, ferro=='10')
@@ -372,19 +400,22 @@ summary(fit10_ld50)
 
 tabgraf10 <- cbind.data.frame(x10, m_sob10)
 graf_fit10 <- ggplot(tabgraf10, aes(x=x10, y=m_sob10))+
-    geom_point()+
     geom_smooth(method='nls',
                 data = tabgraf10,
                 formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
                 se = FALSE,
-                method.args = list(start = list(LD10 = 700, n = 1)))+
+                method.args = list(start = list(LD10 = 700, n = 1)),
+                color='grey')+
+    geom_point()+
+    geom_errorbar(aes(ymin=m_sob10-e_sob10, ymax=m_sob10+e_sob10), width=200)+
     ggtitle('10 mM')+
     theme_bw()+
-    xlab("Fluência (J/m<sup>2</sup>)")+
-    ylab('Sobrevivência (N/N<sub>0</sub>)')+
-    theme(axis.title.x = element_markdown(),
-        axis.title.y = element_markdown())
-ggsave(plot=graf_fit10, 'fit10.png')
+    xlab("Fluence (J/m<sup>2</sup>)")+
+    ylab('Viability (N/N<sub>0</sub>)')+
+    theme(axis.title = element_markdown(size=12),
+          axis.text = element_text(size=10))
+graf_fit10
+ggsave(plot=graf_fit10, 'fit10_artigo.tiff', dpi=600, unit='cm', width=15, height=15)
 
 # Concentração 20mM
 tab20 <- filter(tabgraf, ferro=='20')
@@ -399,19 +430,22 @@ summary(fit20_ld50)
 
 tabgraf20 <- cbind.data.frame(x20, m_sob20)
 graf_fit20 <- ggplot(tabgraf20, aes(x=x20, y=m_sob20))+
-    geom_point()+
     geom_smooth(method='nls',
                 data = tabgraf20,
                 formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
                 se = FALSE,
-                method.args = list(start = list(LD10 = 7000, n = 1)))+
+                method.args = list(start = list(LD10 = 7000, n = 1)),
+                color='grey')+
+    geom_point()+
+    geom_errorbar(aes(ymin=m_sob20-e_sob20, ymax=m_sob20+e_sob20), width=400)+
     ggtitle('20 mM')+
     theme_bw()+
-    xlab("Fluência (J/m<sup>2</sup>)")+
-    ylab('Sobrevivência (N/N<sub>0</sub>)')+
-    theme(axis.title.x = element_markdown(),
-        axis.title.y = element_markdown())
-ggsave(plot=graf_fit20, 'fit20.png')
+    xlab("Fluence (J/m<sup>2</sup>)")+
+    ylab('Viability (N/N<sub>0</sub>)')+
+    theme(axis.title = element_markdown(size=12),
+          axis.text = element_text(size=10))
+graf_fit20
+ggsave(plot=graf_fit20, 'fit20_artigo.tiff', dpi=600, unit='cm', width=15, height=15)
 
 # Concentração 30mM
 tab30 <- filter(tabgraf, ferro=='30')
@@ -428,16 +462,154 @@ coef(summary(fit30_ld50))
 
 tabgraf30 <- cbind.data.frame(x30, m_sob30)
 graf_fit30 <- ggplot(tabgraf30, aes(x=x30, y=m_sob30))+
-    geom_point()+
     geom_smooth(method='nls',
                 data = tabgraf30,
                 formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
                 se = FALSE,
-                method.args = list(start = list(LD10 = 15000, n = 1)))+
+                method.args = list(start = list(LD10 = 15000, n = 1)),
+                color='grey')+
+    geom_point()+
+    geom_errorbar(aes(ymin=m_sob30-e_sob30, ymax=m_sob30+e_sob30), width=900)+
     ggtitle('30 mM')+
     theme_bw()+
-    xlab("Fluência (J/m<sup>2</sup>)")+
-    ylab('Sobrevivência (N/N<sub>0</sub>)')+
-    theme(axis.title.x = element_markdown(),
-        axis.title.y = element_markdown())
-ggsave(plot=graf_fit30, 'fit30.png')
+    xlab("Fluence (J/m<sup>2</sup>)")+
+    ylab('Viability (N/N<sub>0</sub>)')+
+    theme(axis.title = element_markdown(size=12),
+          axis.text = element_text(size=10))
+graf_fit30
+ggsave(plot=graf_fit30, 'fit30_artigo.tiff', dpi=600, unit='cm', width=15, height=15)
+
+
+#********** LD50 TEÓRICO/EXPERIMENTAL **********
+# Gráfico
+fun.ld50 <- function(c) ld_i*epslon*c*l*log(10)/(1-10^(-epslon*l*c))
+
+epslon <- 2.4
+l <- 0.207876
+ld_i <- summary(fit0_ld50)$parameters[1,1]
+
+ld50_medido <- c(summary(fit0_ld50)$parameters[1,1], summary(fit5_ld50)$parameters[1,1], summary(fit10_ld50)$parameters[1,1], summary(fit20_ld50)$parameters[1,1], summary(fit30_ld50)$parameters[1,1])
+ld50_se <- c(summary(fit0_ld50)$parameters[1,2], summary(fit5_ld50)$parameters[1,2], summary(fit10_ld50)$parameters[1,2], summary(fit20_ld50)$parameters[1,2], summary(fit30_ld50)$parameters[1,2])
+Fe <- c(0, 5, 10, 20, 30)
+graf_ld50.Fe <- cbind.data.frame(ld50_medido, ld50_se, Fe)
+
+ld50_Fe <- ggplot(graf_ld50.Fe, aes(y=ld50_medido, x=Fe))+
+    geom_function(fun = fun.ld50, aes(color='darkgrey'), linewidth=.75, xlim=c(0,30), show.legend=TRUE)+
+    geom_point(size=1.5, show.legend=TRUE, aes(color='black'))+
+    geom_errorbar(aes(ymin=ld50_medido-ld50_se, ymax=ld50_medido+ld50_se), width=0.5, size=.5)+
+    theme_bw()+
+  #  xlab('[Fe<sup>3+</sup>] (mmol.L<sup> -1</sup>)')+
+  #  ylab('LD<sub>50</sub> (J.m<sup> -2</sup>)')+
+    labs(x='[Fe<sup>3+</sup>] (mmol.L<sup> -1</sup>)',
+         y='LD<sub>50</sub> (J.m<sup> -2</sup>)', colour='')+
+    theme(
+      panel.grid.major = element_line(size=.5),
+      panel.grid.minor = element_line(size=.2),
+      legend.text = element_markdown(size=12),
+      legend.position='right',
+      axis.title=element_markdown(size=14),
+      axis.text=element_text(size=12))+
+    scale_colour_manual(labels=c('Experimental', 'Theoretical'), values=c('black', 'darkgrey'))
+ld50_Fe
+ggsave(plot=ld50_Fe, 'LD50_teoricoXmedido.tiff', device='tiff', dpi=600, unit='cm', width=20, height=16)
+
+# Kolmogorov-Smirnov
+ld50_teor <- c(fun.ld50(5), fun.ld50(10), fun.ld50(20), fun.ld50(30))
+ks.test(ld50_teor, ld50_medido[-1])
+
+#********** PROFUNDIDADE X CONCENTRAÇÃO Fe3+ **********
+# Função isolando profundidade (resolvido por Wolframalpha Algebra)
+profun_marte <- function(conc, mu, LD50){
+  profundidade <- (0.00180956*LD50*mu*lambertW0(-(0.0156651*10^(-0.00680328/(LD50*mu)))/(LD50*mu)) + 0.000028347)/(conc*LD50*mu)
+  return(profundidade)
+}
+
+log10_minor_break = function (...){
+  function(x) {
+    minx         = floor(min(log10(x), na.rm=T))-1;
+    maxx         = ceiling(max(log10(x), na.rm=T))+1;
+    n_major      = maxx-minx+1;
+    major_breaks = seq(minx, maxx, by=1)
+    minor_breaks =
+      rep(log10(seq(1, 9, by=1)), times = n_major)+
+      rep(major_breaks, each = 9)
+    return(10^(minor_breaks))
+  }
+}
+
+#Gráficos
+conc <- rep(c(0.001, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100), times=6)
+bac <- rep(c('af', 'sb'), each=36)
+mu <- rep(c(0.19/3600, 0.19/(2*3600), 0.19/36000, 0.5656/3600, 0.5656/(2*3600), 0.5656/36000), each=12)
+ld50.bac <- rep(c(17.6, 151.11), each=36)
+
+prof <- profun_marte(conc, mu, ld50.bac)
+tabela <- cbind.data.frame(conc, bac, mu, prof)
+
+prof_af <- ggplot(tabela, aes(x=conc))+
+    geom_function(fun = profun_marte,
+        args = list(mu=0.19/3600, LD50=9), aes(color='mu'), linewidth=.7)+
+    geom_function(fun = profun_marte,
+        args = list(mu=0.19/(2*3600), LD50=9), aes(color='mu/2'), linewidth=.7, linetype='longdash')+
+    geom_function(fun = profun_marte,
+        args = list(mu=0.19/36000, LD50=9), aes(color='mu/10'), linewidth=.7, linetype='dotdash')+
+    theme_bw()+
+    ggtitle(expression(paste(bold('B - '), italic('A. ferrooxidans'))))+
+    labs(x='[Fe<sup>3+</sup>] (mmol.L<sup> -1</sup>)',
+         y='Depth (m)', colour='')+
+    scale_colour_manual(labels=c(expression(paste(mu)), expression(paste(mu,'/',10)), expression(paste(mu,'/',2))), values=c('gray50', 'gray70', 'black'))+
+    theme(
+      plot.title = element_text(size=15),
+      panel.grid.major = element_line(size=.5),
+      panel.grid.minor = element_line(size=.1),
+      legend.text = element_text(size=13),
+      legend.position='right',
+      axis.title=element_markdown(size=13),
+      axis.text=element_text(size=12))+
+      scale_x_log10(limits=c(0.001, 100),
+                    labels = trans_format("log10", math_format(10^.x)),
+                    breaks=trans_breaks("log10", function(x) 10^x, n=5),
+                    minor_breaks=log10_minor_break())+
+      scale_y_log10(labels = trans_format("log10", math_format(10^.x)),
+                    breaks=trans_breaks("log10", function(x) 10^x, n=5),
+                    minor_breaks=log10_minor_break())
+
+prof_af
+ggsave(plot=prof_af, 'profundidade_af.tiff', device='tiff', dpi=600, unit='cm', width=20, height=16)
+
+
+
+
+prof_sb <- ggplot(tabela, aes(x=conc))+
+    geom_function(fun = profun_marte,
+        args = list(mu=0.5656/3600, LD50=151.11), aes(color='mu'), linewidth=.7)+
+    geom_function(fun = profun_marte,
+        args = list(mu=0.5656/(2*3600), LD50=151.11), aes(color='mu/2'), linewidth=.7, linetype='longdash')+
+    geom_function(fun = profun_marte,
+        args = list(mu=0.5656/36000, LD50=151.11), aes(color='mu/10'), linewidth=.7, linetype='dotdash')+
+    theme_bw()+
+    labs(x='[Fe<sup>3+</sup>] (mmol.L<sup> -1</sup>)',
+         y='Depth (m)', colour='')+
+    scale_colour_manual(labels=c(expression(paste(mu)), expression(paste(mu,'/',10)), expression(paste(mu,'/',2))), values=c('gray50', 'gray70', 'black'))+
+    ggtitle(expression(paste(bold('A - '), italic('S. boulardii'))))+
+    theme(
+      plot.title = element_text(size=15),
+      panel.grid.major = element_line(size=.5),
+      panel.grid.minor = element_line(size=.1),
+      legend.text = element_text(size=13),
+      legend.position='right',
+      axis.title=element_markdown(size=13),
+      axis.text=element_text(size=12))+
+      scale_x_log10(limits=c(0.001, 100),
+                    labels = trans_format("log10", math_format(10^.x)),
+                    breaks=trans_breaks("log10", function(x) 10^x, n=5),
+                    minor_breaks=log10_minor_break())+
+      scale_y_log10(labels = trans_format("log10", math_format(10^.x)),
+                    breaks=trans_breaks("log10", function(x) 10^x, n=5),
+                    minor_breaks=log10_minor_break())
+
+prof_sb
+ggsave(plot=prof_sb, 'profundidade_sb.tiff', device='tiff', dpi=600, unit='cm', width=20, height=16)
+
+profundidade <- grid.arrange(prof_sb, prof_af, nrow=2)
+ggsave(plot=profundidade, 'profundidade.tiff', device='tiff', dpi=600, unit='cm', width=20, height=30)

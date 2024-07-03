@@ -117,19 +117,17 @@ erro_ms1655_3 <- ((ms1655_3$Dilution*100))*(se_ms1655_3)
 # Para gráfico total (dados reais, média entre  replicatas)
 medias_ms1655 <- cbind(ms1655_1$Cor.Mean, ms1655_2$Cor.Mean, ms1655_3$Cor.Mean)   # Junta as médias corrigas de cada replicata numa tabela, cada replicata como uma coluna
 media_total_ms1655 <- rowMeans(medias_ms1655, na.rm=TRUE)    # Cria vetor da média entre as médias corrigidas de cada replicata
-#erro_junto_ms1655 <- cbind(erro_ms1655_1, erro_ms1655_2, erro_ms1655_3)
-#erro_total_ms1655 <- rowMeans(erro_junto_ms1655, na.rm=TRUE)
 erro_quadrado_ms1655 <- cbind((1/3*erro_ms1655_1)^2, (1/3*erro_ms1655_2)^2, (1/3*erro_ms1655_3)^2)    # Cria tabela com os erros padrões de cada replicata ao quadrado
 erro_total_ms1655 <- sqrt(rowSums(erro_quadrado_ms1655, na.rm=TRUE))   # Cria vetor com erro associado a tirar a média entre replicatas
 tempo_total_ms1655 <- rep(0:24, each=10)   #Cria vetor com tempo em horas para facilitar a gaficação
-
+erro_ln <- erro_total_ms1655/media_total_ms1655
 
 conc_total_ms1655 <- rep(c('0 mol/L', '0.25 mol/L', '0.5 mol/L', '0.75 mol/L', '1 mol/L', '1.25 mol/L', '1.5 mol/L', '2 mol/L', '3 mol/L', '4 mol/L'), times=25)   # Cria vetor com concentraçãoes para conseguir colocar cada concentração em uma cor
 
 #ms1655_1$Conc. <- factor(ms1655_1$Conc., levels = c('0 mol/L', '0.5 mol/L', '1 mol/L', '1.25 mol/L', '1.5 mol/L', '2 mol/L', '3 mol/L', '4 mol/L'))
 ms1655_graf <- cbind.data.frame(tempo_total_ms1655, conc_total_ms1655, media_total_ms1655, erro_total_ms1655)
-
-
+ln_ufc <- log(media_total_ms1655)
+mg1655_graf_ln <- cbind.data.frame(tempo_total_ms1655, conc_total_ms1655, ln_ufc, erro_ln)
 
 graf_total <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655, color=conc_total_ms1655)) +
     geom_point(size=1.5, aes(shape=conc_total_ms1655))+
@@ -188,7 +186,7 @@ graf_facet <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655
     geom_errorbar(aes(ymin=media_total_ms1655-erro_total_ms1655, ymax=media_total_ms1655+erro_total_ms1655), width=0.15, size=.5)+
     facet_wrap(~conc_total_ms1655, labeller=facet_name)+
     theme_bw()+
-    labs(x='Time (h)', y=expression(CFU.mL^{-1}))+
+    labs(x='Tempo (h)', y=expression(UFC.mL^{-1}))+
     theme(
       panel.grid.major = element_line(size=.2),
       panel.grid.minor = element_line(size=.1),
@@ -197,9 +195,9 @@ graf_facet <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655
                    labels = trans_format("log10", math_format(10^.x)),
                    breaks=trans_breaks("log10", function(x) 10^x, n=8),
                    minor_breaks=log10_minor_break())+
-    scale_color_viridis(discrete=TRUE, option='turbo')
+    scale_color_manual(values=c("#70846B", "#70846B", "#70846B", "#EC9C61", "#EC9C61", "#EC9C61", "#973E3A", "#973E3A", "#973E3A", "#973E3A"))
 graf_facet
-ggsave('mg1655_facet.png', graf_facet, device='png', unit='cm', width=20, height=16)
+ggsave('mg1655_facet_tese.png', graf_facet, device='png', unit='cm', width=20, height=16)
 
 graf_facet_cinza <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_ms1655)) +
     geom_point(size=.5, shape=1)+
@@ -219,6 +217,19 @@ graf_facet_cinza <- ggplot(ms1655_graf, aes(x=tempo_total_ms1655, y=media_total_
 graf_facet_cinza
 ggsave('mg1655_facet_cinza.png', graf_facet_cinza, device='png', unit='cm', width=10, height=20)
 
+graf_facet_cinza_ln <- ggplot(mg1655_graf_ln, aes(x=tempo_total_ms1655, y=ln_ufc)) +
+    geom_point(size=.5, shape=1)+
+    geom_line(linewidth=.2)+
+    geom_errorbar(aes(ymin=ln_ufc-erro_ln, ymax=ln_ufc+erro_ln), width=0.15, size=.5)+
+    facet_wrap(~conc_total_ms1655, labeller=facet_name, ncol=2)+
+    theme_bw()+
+    labs(x='Time (h)', y=expression(ln~(CFU.mL^{-1})))+
+    theme(
+      panel.grid.major = element_line(linewidth=.2),
+      panel.grid.minor = element_line(linewidth=.1),
+      legend.position = "none")
+graf_facet_cinza_ln
+ggsave('mg1655_facet_cinza_artigo.png', graf_facet_cinza_ln, device='png', unit='cm', width=10, height=20, dpi=600)
 
 
 
@@ -424,14 +435,14 @@ graf_mu <- ggplot(tab_mu, aes(x=conc, y=mumax))+
     theme_bw()+
     labs(
       x=expression(paste('[NaCl] (mol.L)'^'-1')),
-      y=expression(paste(mu['max'])))+
+      y=expression(paste(mu~(h^-1))))+
     scale_x_continuous(breaks=c(0, 0.25, 0.5, 0.75, 1, 1.25))+
     theme(
       panel.grid.major = element_line(size=.25),   # Define largura da linha maior do grid interno no gráfico
       panel.grid.minor = element_line(size=.1),   # Define largura da linha menor do grid interno do gráfico
       axis.title.y = element_text(size=12))
 graf_mu
-ggsave('mu.png', graf_mu, device='png', unit='cm', width=7, height=7, dpi=300)
+ggsave('mu.png', graf_mu, device='png', unit='cm', width=7, height=7, dpi=600)
 
 write.table(tab_mu, file='mumax_tab.tsv', sep='\t', row.names=FALSE, dec=',')
 
