@@ -21,18 +21,10 @@ install.packages("gridExtra")
 library(gridExtra)
 install.packages("minpack.lm")
 library(minpack.lm)
-install.packages('plyr')
-library(plyr)
+install.packages('writexl')
+library(writexl)
 
-# ********** FUNÇÕES **********
-baranyi <- function(params, x) {
-  params[1] + params[2] * (x + (1/params[2]) * log(exp(-params[2]*x) +
-  exp(-params[2] * params[3]) - exp(-params[2] * (x + params[3])))) -
-  log(1 + ((exp(params[2] * (x + (1/params[2]) * log(exp(-params[2]*x) +
-  exp(-params[2] * params[3]) - exp(-params[2] * (x + params[3])))))-1)/
-    (exp(params[4]-params[1]))))
-}
-
+# ********** FUNÇÕES *********
 gompertz <- function(params, x) {
   params[1] + (params[3] * exp(-exp(-params[2] * (x - params[4]))))
 }
@@ -116,10 +108,12 @@ M <- append(M, summary(fit03)$parameters[3,1], after=length(M))
 M_sd <- append(M_sd, summary(fit03)$parameters[3,2], after=length(M_sd))
 
 
-# GRÁFICOS
+# ********** GRÁFICOS ************
 nomes <- c(names, names, nome02, 'tbe5.am1.e')
 conce <- c(rep(0, times=18), rep(0.1, times=18), rep(0.2, times=15), 0.3)
 tab_param <- cbind.data.frame(nomes, conce, Y0, mmax, C, M, mmax_sd, M_sd)
+
+write_xlsx(tab_param, 'Parâmetros fit.xlsx')
 
 # 1 be5.am1.g
 tabgraf <- filter(tab, Isolado=='be5.am1.g' & Concentracao<0.3)
