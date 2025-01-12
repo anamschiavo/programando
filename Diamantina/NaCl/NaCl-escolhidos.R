@@ -102,3 +102,39 @@ graf_sob
 write.table(tabgraf, file='sob.tsv', sep='\t', row.names=FALSE, dec=',')
 
 ggsave('escolhidos_NaCl.png', graf_sob, device='png', unit='cm', width = 18, height = 26, dpi=300)   # Salva gráfico que acabamos de criar como um arquivo
+
+
+tab_slide <- filter(tabgraf, isolado=='D14.30.010-1'|
+                            isolado=='D14.30.010-5'|
+                          isolado=='D20.15.010-12'|
+                          isolado=='D20.30.010-2'|
+                          isolado=='D23.15.010-1'|
+                          isolado=='D23.30.010-1'|
+                          isolado=='D4.15.R2A-5'|
+                          isolado=='D5.30.010-1'|
+                          isolado=='D7.15.010-6'|
+                          isolado=='D7.30.100-9')
+
+graf_slide <- ggplot(tab_slide, aes(x=conc, y=sob))+
+    geom_point(size=.5)+   # Coloca as bolinhas
+    geom_line(linewidth=.3)+   # Coloca as linhas
+    geom_hline(yintercept=1, color='darkgrey')+
+    geom_errorbar(aes(ymin=sob-erro, ymax=sob+erro), width=0.15, linewidth=.5)+    # Coloca as barras de erro
+    facet_wrap(~isolado, ncol=5, labeller=label_parsed)+    # Deixa facetado por espécie
+    theme_bw()+   # Muda a aparência para o tema certo
+    xlab(bquote("[NaCl]"~(mol.L^-1)))+    # Coloca o nome do eixo x
+    ylab(bquote("Sobrevivência"~(N/N[0])))+    # Coloca o nome do eixo y
+    theme(
+      panel.grid.major = element_line(linewidth=.25),   # Define largura da linha maior do grid interno no gráfico
+      panel.grid.minor = element_line(linewidth=.1),   # Define largura da linha menor do grid interno do gráfico
+      legend.position='none',
+      axis.title = element_text(size=16),
+      axis.text = element_text(size=12),
+      strip.text=element_text(size=12))+    # Retira a legenda
+    scale_y_log10(limits = c(1e-4,20),   # Transforma o eixo y em log10 com limiter de 1 a 10^-5
+                  labels = trans_format("log10", math_format(10^.x)),
+                   breaks = trans_breaks("log10", function(x) 10^x, n=5),
+                   minor_breaks=log10_minor_break())
+graf_slide
+
+ggsave('escolhidos_NaCl_slide.png', graf_slide, device='png', unit='cm', width = 30, height = 15, dpi=600)   # Salva gráfico que acabamos de criar como um arquivo

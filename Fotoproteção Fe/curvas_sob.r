@@ -272,25 +272,27 @@ junto
 ggsave(plot=junto, 'S_boulardii_junto_jaja.png')
 
 junto_bw <- ggplot(tabgraf, aes(x=dose, y=sob, color=ferro, shape=ferro))+
-    geom_point(size=2)+
+    geom_point(size=2.5)+
     geom_line(linewidth=.7)+
     geom_errorbar(aes(ymin=sob-erro_sob, ymax=sob+erro_sob, xmin=dose-erro_dose, xmax=dose+erro_dose), width=.15, size=.5)+
     theme_bw()+
-    labs(x=bquote("Fluence"~(J.m^-2)),
+    labs(x='Fluence (J.m<sup>-2</sup>)',
          y='Viability (N/N<sub>0</sub>)')+
     scale_color_grey(start=0, end=.75, name='[Fe<sup>3+</sup>] (mmol.L<sup>-1</sup>)')+
     scale_shape_manual(values=c(15, 11, 17, 4, 16), name='[Fe<sup>3+</sup>] (mmol.L<sup>-1</sup>)')+
     theme(
       panel.grid.major = element_line(size=.5),
       panel.grid.minor = element_line(size=.2),
-      legend.title = element_markdown(),
-      axis.title.y=element_markdown())+
+      legend.title = element_markdown(size=12),
+      legend.text = element_text(size=10),
+      axis.title=element_markdown(size=12),
+      axis.text=element_text(size=10))+
     scale_y_log10(limits = c(1e-5,2),
                   labels = trans_format("log10", math_format(10^.x)),
                   breaks=trans_breaks("log10", function(x) 10^x, n=5),
                   minor_breaks=log10_minor_break())
 junto_bw
-ggsave(plot=junto_bw, 'S_boulardii_junto_artigo.tiff', device='tiff', dpi=600, unit='cm', width=20, height=12)
+ggsave(plot=junto_bw, 'S_boulardii_junto_artigo_gabriel.tiff', device='tiff', dpi=600, unit='cm', width=20, height=12)
 
 junto_semlog <- ggplot(tabgraf, aes(x=dose, y=sob, color=ferro))+
     geom_point(size=1.5)+
@@ -581,16 +583,16 @@ ggsave(plot=prof_af, 'profundidade_af.tiff', device='tiff', dpi=600, unit='cm', 
 
 
 prof_sb <- ggplot(tabela, aes(x=conc))+
+#    geom_function(fun = profun_marte,
+#        args = list(mu=0.5656/3600, LD50=151.11), aes(color='mu'), linewidth=.7)+
     geom_function(fun = profun_marte,
-        args = list(mu=0.5656/3600, LD50=151.11), aes(color='mu'), linewidth=.7)+
-    geom_function(fun = profun_marte,
-        args = list(mu=0.5656/(2*3600), LD50=151.11), aes(color='mu/2'), linewidth=.7, linetype='longdash')+
+        args = list(mu=0.5656/(2*3600), LD50=151.11), aes(color='mu/2'), linewidth=.7)+
     geom_function(fun = profun_marte,
         args = list(mu=0.5656/36000, LD50=151.11), aes(color='mu/10'), linewidth=.7, linetype='dotdash')+
     theme_bw()+
     labs(x='[Fe<sup>3+</sup>] (mmol.L<sup> -1</sup>)',
          y='Depth (m)', colour='')+
-    scale_colour_manual(labels=c(expression(paste(mu)), expression(paste(mu,'/',10)), expression(paste(mu,'/',2))), values=c('gray50', 'gray70', 'black'))+
+    scale_colour_manual(labels=c(expression(paste(mu,'/',10)), expression(paste(mu,'/',2))), values=c('black', 'gray70'))+
     ggtitle(expression(paste(bold('A - '), italic('S. boulardii'))))+
     theme(
       plot.title = element_text(size=15),

@@ -20,8 +20,8 @@ install.packages('MASS')
 library(MASS)
 install.packages('scales')
 library(scales)
-#install.packages('growthrates')
-#library(growthrates)
+install.packages("gridExtra")
+library(gridExtra)
 
 # ********** FUNÇÕES **********
 baranyi <- function(params, x) {
@@ -255,17 +255,17 @@ coef_0 <- c(min(y), baranyi_param_0M[1], 1.5, baranyi_param_0M[2])
 y_0M <- baranyi(coef_0, d)
 tab0_graf <- cbind.data.frame(d, y, y_0M, erro_0)
 graf_0 <- ggplot(tab0_graf, aes(x=d))+
-  geom_point(aes(y=y))+
+  geom_point(size=.7, aes(y=y))+
   geom_line(aes(y=y_0M))+
   geom_errorbar(aes(ymin=y-erro_0, ymax=y+erro_0), width=.3)+
   theme_bw()+
-  ggtitle('Baranyi - 0M (lag fixada 2)')+
+  ggtitle(expression(paste('0.00 mol.L'^'-1')))+
   labs(
-    x='Time (hours)',
+    x='Time (h)',
     y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_0
 summary(fit_0M)
-ggsave('graf_0.png', graf_0)
+#ggsave('graf_0.png', graf_0)
 
 
 # 0,25M fitado manualmente (Baranyi)
@@ -287,17 +287,17 @@ coef_025 <- c(min(y), baranyi_param_025M[1], 1.5, baranyi_param_025M[2])
 y_025M <- baranyi(coef_025, d)
 tab025_graf <- cbind.data.frame(d, y, y_025M, erro_025)
 graf_025 <- ggplot(tab025_graf, aes(x=d))+
-  geom_point(aes(y=y))+
+  geom_point(size=.7, aes(y=y))+
   geom_line(aes(y=y_025M))+
   geom_errorbar(aes(ymin=y-erro_025, ymax=y+erro_025), width=.3)+
   theme_bw()+
-  ggtitle('Baranyi - 0,25M (lag fixada)')+
+  ggtitle(expression(paste('0.25 mol.L'^'-1')))+
   labs(
-    x='Time (hours)',
+    x='Time (h)',
     y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_025
 summary(fit_025M)
-ggsave('graf_025.png', graf_025)
+#ggsave('graf_025.png', graf_025)
 
 # 0,5M fitado manualmente (Baranyi)
 tab_05 <- filter(ms1655_graf, conc=='0.5 mol/L')   # Pega informações apenas da concentração desejada
@@ -318,17 +318,17 @@ coef_05 <- c(min(y), baranyi_param_05M[1], 2 , baranyi_param_05M[2])
 y_05M <- baranyi(coef_05, d)
 tab05_graf <- cbind.data.frame(d, y, y_05M, erro_05)
 graf_05 <- ggplot(tab05_graf, aes(x=d))+
-  geom_point(aes(y=y))+
+  geom_point(size=.7, aes(y=y))+
   geom_line(aes(y=y_05M))+
   geom_errorbar(aes(ymin=y-erro_05, ymax=y+erro_05), width=.3)+
   theme_bw()+
-  ggtitle('Baranyi - 0,5M (lag fixada)')+
+  ggtitle(expression(paste('0.50 mol.L'^'-1')))+
   labs(
-    x='Time (hours)',
+    x='Time (h)',
     y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_05
 summary(fit_05M)
-ggsave('graf_05.png', graf_05)
+#ggsave('graf_05.png', graf_05)
 
 # 0,75M fitado manualmente (Baranyi)
 tab_075 <- filter(ms1655_graf, conc=='0.75 mol/L')   # Pega informações apenas da concentração desejada
@@ -348,17 +348,17 @@ coef_075 <- c(min(y), baranyi_param_075M[1], baranyi_param_075M[2], baranyi_para
 y_075M <- baranyi(coef_075, d)
 tab075_graf <- cbind.data.frame(d, y, y_075M, erro_075)
 graf_075 <- ggplot(tab075_graf, aes(x=d))+
-  geom_point(aes(y=y))+
+  geom_point(size=.7, aes(y=y))+
   geom_line(aes(y=y_075M))+
   geom_errorbar(aes(ymin=y-erro_075, ymax=y+erro_075), width=.3)+
   theme_bw()+
-  ggtitle('Baranyi - 0,75M')+
+  ggtitle(expression(paste('0.75 mol.L'^'-1')))+
   labs(
-    x='Time (hours)',
+    x='Time (h)',
     y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_075
 summary(fit_075M)
-ggsave('graf_075.png', graf_075)
+#ggsave('graf_075.png', graf_075)
 
 # 1M fitado manualmente (Baranyi)
 tab_1 <- filter(ms1655_graf, conc=='1 mol/L')   # Pega informações apenas da concentração desejada
@@ -378,17 +378,17 @@ coef_1 <- c(min(y), baranyi_param_1M[1], baranyi_param_1M[2], baranyi_param_1M[3
 y_1M <- baranyi(coef_1, d)
 tab1_graf <- cbind.data.frame(d, y, y_1M, erro_1)
 graf_1 <- ggplot(tab1_graf, aes(x=d))+
-  geom_point(aes(y=y))+
+  geom_point(size=.7, aes(y=y))+
   geom_line(aes(y=y_1M))+
   geom_errorbar(aes(ymin=y-erro_1, ymax=y+erro_1), width=.3)+
   theme_bw()+
-  ggtitle('Baranyi - 1M')+
+  ggtitle(expression(paste('1.00 mol.L'^'-1')))+
   labs(
-    x='Time (hours)',
+    x='Time (h)',
     y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_1
 summary(fit_1M)
-ggsave('graf_1.png', graf_1)
+#ggsave('graf_1.png', graf_1)
 
 # 1,25M fitado manualmente (Baranyi)
 tab_125 <- filter(ms1655_graf, conc=='1.25 mol/L')   # Pega informações apenas da concentração desejada
@@ -408,17 +408,16 @@ coef_125 <- c(y0, baranyi_param_125M[1], baranyi_param_125M[2], baranyi_param_12
 y_125M <- baranyi(coef_125, d)
 tab125_graf <- cbind.data.frame(d, y, y_125M, erro_125)
 graf_125 <- ggplot(tab125_graf, aes(x=d))+
-  geom_point(aes(y=y))+
+  geom_point(size=.7, aes(y=y))+
   geom_line(aes(y=y_125M))+
   geom_errorbar(aes(ymin=y-erro_125, ymax=y+erro_125), width=.3)+
   theme_bw()+
-  ggtitle('Baranyi - 1,25M')+
-  labs(
-    x='Time (hours)',
+  ggtitle(expression(paste('1.25 mol.L'^'-1')))+  labs(
+    x='Time (h)',
     y=expression(paste('ln'*'(UFC.mL'^'-1'*')')))
 graf_125
 summary(fit_125M)
-ggsave('graf_125.png', graf_125)
+#ggsave('graf_125.png', graf_125)
 
 
 
@@ -446,6 +445,10 @@ ggsave('mu.png', graf_mu, device='png', unit='cm', width=7, height=7, dpi=600)
 
 write.table(tab_mu, file='mumax_tab.tsv', sep='\t', row.names=FALSE, dec=',')
 
+
+grid_fit <- grid.arrange(graf_0, graf_025, graf_05, graf_075, graf_1, graf_125,
+                           ncol=2)
+ggsave('grid_fit.png', grid_fit,  device='png', unit='cm', width = 12, height = 20, dpi=300)
 
 #********** PSEUDO-R2 **********
 y_baranyi_0 <- yi_fitado_baranyi(d, coef_0)
