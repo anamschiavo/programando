@@ -236,6 +236,10 @@ tabgraf <- cbind.data.frame(dose, tab[,2], sob, erro, erro_dose)
 colnames(tabgraf) <- c('dose', 'ferro', 'sob', 'erro_sob', 'erro_dose' )
 tabgraf$ferro <- as.factor(tabgraf$ferro)
 
+tab_review <- filter(tabgraf, dose>19000 & ferro=='30')
+media20k<-mean(tab_review$sob)
+sd20k <- sd(tab_review$sob)
+
 #********** GRÁFICOS **********
 log10_minor_break = function (...){
   function(x) {
@@ -370,7 +374,7 @@ fit5_ld50 <- nls(m_sob5 ~ (1+f*x5)/(1+(2*f*LD50+1)*(x5/LD50)^n),
 			start = list(LD50 = 200, n = 2))
 summary(fit5_ld50)
 
-tabgraf5 <- cbind.data.frame(x5, m_sob5)
+tabgraf5 <- cbind.data.frame(x5, m_sob5, e_sob5)
 graf_fit5 <- ggplot(tabgraf5, aes(x=x5, y=m_sob5))+
     geom_smooth(method='nls',
                 data = tabgraf5,
@@ -481,6 +485,65 @@ graf_fit30 <- ggplot(tabgraf30, aes(x=x30, y=m_sob30))+
 graf_fit30
 ggsave(plot=graf_fit30, 'fit30_artigo.tiff', dpi=600, unit='cm', width=15, height=15)
 
+
+
+
+# Gráfico junto (se Mimas quiser)
+graf_fit_fe <- ggplot(tabgraf, aes(x=dose, y=sob))+
+    geom_smooth(inherit.aes = FALSE,
+                data = tabgraf0,
+                aes(x=x0, y=m_sob0),
+                method='nls',
+                formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
+                se = FALSE,
+                method.args = list(start = list(LD10 = 200, n = 2, f=.001)),
+                color='#000000')+
+    geom_smooth(inherit.aes = FALSE,
+                data = tabgraf5,
+                aes(x=x5, y=m_sob5),
+                method='nls',
+                formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
+                se = FALSE,
+                method.args = list(start = list(LD10 = 200, n = 2)),
+                color='#666666')+
+    geom_smooth(inherit.aes = FALSE,
+                data = tabgraf10,
+                aes(x=x10, y=m_sob10),
+                method='nls',
+                formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
+                se = FALSE,
+                method.args = list(start = list(LD10 = 700, n = 1)),
+                color='#8C8C8C')+
+    geom_smooth(inherit.aes = FALSE,
+                data = tabgraf20,
+                aes(x=x20, y=m_sob20),
+                method='nls',
+                formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
+                se = FALSE,
+                method.args = list(start = list(LD10 = 7000, n = 1)),
+                color='#A8A8A8')+
+    geom_smooth(inherit.aes = FALSE,
+                data = tabgraf30,
+                aes(x=x30, y=m_sob30),
+                method='nls',
+                formula = y ~ (1+f*x)/(1+(9+10*f*LD10)*exp(n*log(x/LD10))),
+                se = FALSE,
+                method.args = list(start = list(LD10 = 15000, n = 1)),
+                color='#BFBFBF')+
+    geom_point(aes(color=ferro, shape=ferro))+
+    geom_errorbar(aes(ymin=sob-erro_sob, ymax=sob+erro_sob, color=ferro), size=.5)+
+    theme_bw()+
+#    scale_color_manual(values=c('#000004','#dd513a' , '#932667', '#420a68', '#fca50a'))+
+    scale_color_grey(start=0, end=.75, name='[Fe<sup>3+</sup>] (mmol.L<sup>-1</sup>)')+
+    scale_shape_manual(values=c(15, 11, 17, 4, 16), name='[Fe<sup>3+</sup>] (mmol.L<sup>-1</sup>)')+
+    xlab("Fluence (J.m<sup>-2</sup>)")+
+    ylab('Viability (N/N<sub>0</sub>)')+
+    theme(axis.title = element_markdown(size=12),
+          axis.text = element_text(size=10),
+          legend.title=  element_markdown(size=12))
+graf_fit_fe
+ggsave(plot=graf_fit_fe, 'graf_fit_fe_SM.tiff', dpi=600, unit='cm', width=18, height=15)
+ggsave(plot=graf_fit_fe, 'graf_fit_fe_SM.png', dpi=600, unit='cm', width=18, height=15)
 
 #********** LD50 TEÓRICO/EXPERIMENTAL **********
 # Gráfico

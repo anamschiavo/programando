@@ -128,7 +128,7 @@ graf_fit <- ggplot(tabgraf_fit, aes(x=d))+
   scale_x_continuous(breaks = seq(0, 30, 3))+
   labs(
     x='Time (hours)',
-    y='ln(UFC.mL<sup>-1</sup>)')+
+    y='ln(CFU.mL<sup>-1</sup>)')+
     theme(axis.title = element_markdown(size=12),
           axis.text = element_text(size=10),
           panel.grid.major = element_line(size=.25),
